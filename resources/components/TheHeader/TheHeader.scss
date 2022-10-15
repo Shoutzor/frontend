@@ -1,0 +1,17 @@
+#header {
+    .input-group.search-container {
+        width: initial;
+
+        span.input-group-text {
+            background-color: $black;
+            border: 0;
+            padding: 0 0 0 10px;
+        }
+
+        input.form-control {
+            background-color: $black;
+            border: 0;
+            padding-left: 8px;
+        }
+    }
+}
