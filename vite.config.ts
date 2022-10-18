@@ -17,6 +17,7 @@ export default defineConfig({
       '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
       '~vue3-perfect-scrollbar': path.resolve(__dirname, 'node_modules/vue3-perfect-scrollbar'),
       '~vue-slider-component': path.resolve(__dirname, 'node_modules/vue-slider-component'),
+      '~static': path.resolve(__dirname + '/src/assets'),
     }
   },
   css: {

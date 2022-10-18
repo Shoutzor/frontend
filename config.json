@@ -1,7 +1,3 @@
 {
-    "APP_DEBUG": "true",
-    "APP_ENV": "dev",
-    "APP_URL": "http://shoutzor.local",
-    "APP_BASE_URL": "${APP_BASE_URL}",
-    "BROADCAST_URL": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
+    "API_URL": "http://non-existing-url.com"
 }

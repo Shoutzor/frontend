@@ -1,6 +1,6 @@
 <template>
     <div class="load-screen text-center">
-        <img svg-inline src="@static/images/shoutzor-logo.svg" alt="Shoutz0r logo">
+        <ShoutzorLogo alt="Shoutz0r logo" />
         <div class="center-block">
             <BaseSpinner class="mt-5"/>
 
@@ -12,11 +12,15 @@
 </template>
 
 <script>
+import ShoutzorLogo from "@static/images/shoutzor-logo.svg";
 import BaseSpinner from "@components/BaseSpinner.vue";
 
 export default {
     name: 'LoadScreen',
-    components: {BaseSpinner},
+    components: {
+        ShoutzorLogo,
+        BaseSpinner
+    },
     props: {
         message: {
             type: String,
