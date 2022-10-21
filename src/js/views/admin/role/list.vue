@@ -55,10 +55,10 @@
 </template>
 
 <script>
-import { LIST_ROLES_QUERY } from "@graphql/roles";
-import GraphqlPaginator from "@components/GraphqlPaginator";
-import BaseTable from "@components/BaseTable";
-import BaseButton from "@components/BaseButton";
+import { LIST_ROLES_QUERY } from "@graphql/roles.js";
+import GraphqlPaginator from "@components/GraphqlPaginator.vue";
+import BaseTable from "@components/BaseTable.vue";
+import BaseButton from "@components/BaseButton.vue";
 
 export default {
     name: "admin-roles",

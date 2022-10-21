@@ -1,9 +1,9 @@
 <template>
     <div class="load-screen text-center">
         <ShoutzorLogo alt="Shoutz0r logo" />
-        <div class="center-block">
-            <BaseSpinner class="mt-5"/>
 
+        <div class="center-block">
+            <BaseSpinner />
             <div v-if="message.length > 0" class="mt-3">
                 <p>{{ message }}</p>
             </div>
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import ShoutzorLogo from "@static/images/shoutzor-logo.svg";
+import ShoutzorLogo from "@static/images/shoutzor-logo.svg?skipsvgo";
 import BaseSpinner from "@components/BaseSpinner.vue";
 
 export default {
@@ -37,8 +37,8 @@ export default {
     z-index: 99999 !important;
 
     svg {
-        max-width: 25%;
-        max-height: 25%;
+        width: 430px;
+        height: 200px;
         fill: $white;
     }
 }

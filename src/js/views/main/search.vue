@@ -80,13 +80,13 @@
 </template>
 
 <script>
-import { defaultArtistImage, defaultAlbumImage } from "@js/config";
+import { defaultArtistImage, defaultAlbumImage } from "@js/config.js";
 import {useQuery} from "@vue/apollo-composable";
-import { SEARCH_QUERY } from "@graphql/search";
-import BaseSpinner from "@components/BaseSpinner";
-import ArtistList from "@components/ArtistList";
-import MediaIcon from "@components/MediaIcon";
-import RequestButton from "@components/RequestButton";
+import { SEARCH_QUERY } from "@graphql/search.js";
+import BaseSpinner from "@components/BaseSpinner.vue";
+import ArtistList from "@components/ArtistList.vue";
+import MediaIcon from "@components/MediaIcon.vue";
+import RequestButton from "@components/RequestButton.vue";
 
 export default {
     name: "dashboard-view",

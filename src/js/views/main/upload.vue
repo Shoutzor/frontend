@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import UploadArea from "@components/UploadArea";
-import UploadProgress from "@components/UploadProgress";
-import UploadTable from "@components/UploadTable";
+import UploadArea from "@components/UploadArea.vue";
+import UploadProgress from "@components/UploadProgress.vue";
+import UploadTable from "@components/UploadTable.vue";
 
 export default {
     name: "upload-view",

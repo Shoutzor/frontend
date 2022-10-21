@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import NowPlaying from "@components/NowPlaying";
-import ComingupTable from "@components/ComingupTable";
+import NowPlaying from "@components/NowPlaying.vue";
+import ComingupTable from "@components/ComingupTable.vue";
 
 export default {
     name: "dashboard-view",

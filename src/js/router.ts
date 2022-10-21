@@ -1,8 +1,16 @@
 import {createRouter, createWebHashHistory} from "vue-router";
 
-function loadView(view: string) {
-    return () => import(`@js/pages/${view}.vue`);
-}
+import Dashboard from "@js/views/main/dashboard.vue";
+import History from "@js/views/main/history.vue";
+import Upload from "@js/views/main/upload.vue";
+import Artist from "@js/views/main/artist.vue";
+import Album from "@js/views/main/album.vue";
+import Search from "@js/views/main/search.vue";
+
+import AdminDashboard from "@js/views/admin/dashboard.vue";
+import AdminUserList from "@js/views/admin/user/list.vue";
+import AdminRoleList from "@js/views/admin/role/list.vue";
+import AdminRoleEdit from "@js/views/admin/role/list.vue";
 
 export default createRouter({
     history: createWebHashHistory(),
@@ -10,7 +18,7 @@ export default createRouter({
         {
             name: 'dashboard',
             path: '/',
-            component: loadView('main/dashboard'),
+            component: Dashboard,
             meta: {
                 requiresPermission: "website.access"
             }
@@ -18,21 +26,21 @@ export default createRouter({
         {
             name: 'history',
             path: '/history',
-            component: loadView('main/history'),
+            component: History,
             meta: {
                 requiresPermission: "website.access"
             }
         }, {
             name: 'popular',
             path: '/popular',
-            component: loadView('main/dashboard'),
+            component: Dashboard,
             meta: {
                 requiresPermission: "website.access"
             }
         }, {
             name: 'upload',
             path: '/upload',
-            component: loadView('main/upload'),
+            component: Upload,
             meta: {
                 requiresPermission: "website.upload",
                 requiresAuth: true
@@ -40,7 +48,7 @@ export default createRouter({
         }, {
             name: 'artist',
             path: '/artist/:id',
-            component: loadView('main/artist'),
+            component: Artist,
             props: ({params}) => ({
                 id: params.id || null
             }),
@@ -50,7 +58,7 @@ export default createRouter({
         }, {
             name: 'album',
             path: '/album/:id',
-            component: loadView('main/album'),
+            component: Album,
             props: ({params}) => ({
                 id: params.id || null
             }),
@@ -60,14 +68,14 @@ export default createRouter({
         }, {
             name: 'search',
             path: '/search',
-            component: loadView('main/search'),
+            component: Search,
             meta: {
                 requiresPermission: "website.search"
             }
         }, {
             name: 'profile',
             path: '/profile',
-            component: loadView('main/dashboard'),
+            component: Dashboard,
             meta: {
                 requiresPermission: "website.profile",
                 requiresAuth: true
@@ -86,7 +94,7 @@ export default createRouter({
                 {
                     name: 'admin-dashboard',
                     path: 'dashboard',
-                    component: loadView('admin/dashboard'),
+                    component: AdminDashboard,
                     meta: {
                         requiresPermission: "admin.access",
                         requiresAuth: true
@@ -101,7 +109,7 @@ export default createRouter({
                         {
                             name: 'admin-users-list',
                             path: 'list',
-                            component: loadView('admin/users/list'),
+                            component: AdminUserList,
                             meta: {
                                 requiresPermission: "admin.user.list",
                                 requiresAuth: true
@@ -118,7 +126,7 @@ export default createRouter({
                         {
                             name: 'admin-roles-list',
                             path: 'list',
-                            component: loadView('admin/roles/list'),
+                            component: AdminRoleList,
                             meta: {
                                 requiresPermission: "admin.role.list",
                                 requiresAuth: true
@@ -126,7 +134,7 @@ export default createRouter({
                         }, {
                             name: 'admin-roles-edit',
                             path: 'edit/:roleId',
-                            component: loadView('admin/roles/edit'),
+                            component: AdminRoleEdit,
                             props: ({params}) => ({
                                 roleId: Number.parseInt(params.roleId+"", 10) || null
                             }),

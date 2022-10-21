@@ -27,6 +27,7 @@ import TheMenu from '@components/TheMenu.vue';
 import TheMediaplayer from '@components/TheMediaplayer.vue';
 import TheToastmanager from "@components/TheToastmanager.vue";
 import TheModalmanager from "@components/TheModalmanager.vue";
+import PerfectScrollbar from "@components/PerfectScrollbar.vue";
 
 export default {
     name: "Shoutzor",
@@ -35,7 +36,8 @@ export default {
         TheMenu,
         TheModalmanager,
         TheToastmanager,
-        TheMediaplayer
+        TheMediaplayer,
+        PerfectScrollbar
     },
     data() {
         return {
@@ -114,7 +116,9 @@ export default {
     },
     methods: {
         updateScrollbar() {
-            this.$refs.scroll.update();
+            this.$nextTick(() => {
+                this.$refs.scroll.update();
+            });
         },
         getRoute(routeName) {
             // Returns the Route object from vue-router

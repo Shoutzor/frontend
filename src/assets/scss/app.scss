@@ -1,5 +1,4 @@
 //Include the vue3-perfect-scrollbar module styling
-@import "~vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css";
 @import "~vue-slider-component/theme/default.css";
 
 //
@@ -21,8 +20,4 @@
 
 // Include styling overrides
 @import "overrides/bootstrap";
-@import "overrides/vue-perfect-scrollbar";
 @import "overrides/vue-slider";
-
-// Shoutz0r App-loader component styling
-@import "components/app-loader";

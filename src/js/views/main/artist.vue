@@ -29,12 +29,12 @@
 </template>
 
 <script>
-import InformationHeader from "@components/InformationHeader";
-import {defaultArtistImage} from "@js/config";
-import PopularMedia from "@components/PopularMedia";
+import InformationHeader from "@components/InformationHeader.vue";
+import {defaultArtistImage} from "@js/config.js";
+import PopularMedia from "@components/PopularMedia.vue";
 import {useQuery} from "@vue/apollo-composable";
-import {ARTIST_QUERY} from "@graphql/artist";
-import PopularAlbums from "@components/PopularAlbums";
+import {ARTIST_QUERY} from "@graphql/artist.js";
+import PopularAlbums from "@components/PopularAlbums.vue";
 
 export default {
     name: "artist-view",

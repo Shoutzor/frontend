@@ -49,11 +49,11 @@
 </template>
 
 <script>
-import { LIST_USERS_QUERY } from "@graphql/users";
-import GraphqlPaginator from "@components/GraphqlPaginator";
-import BaseTable from "@components/BaseTable";
-import RoleList from "@components/RoleList";
-import BaseButton from "@components/BaseButton";
+import { LIST_USERS_QUERY } from "@graphql/users.js";
+import GraphqlPaginator from "@components/GraphqlPaginator.vue";
+import BaseTable from "@components/BaseTable.vue";
+import RoleList from "@components/RoleList.vue";
+import BaseButton from "@components/BaseButton.vue";
 
 export default {
     name: "admin-users",

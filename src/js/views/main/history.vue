@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import HistoryTable from "@components/HistoryTable";
+import HistoryTable from "@components/HistoryTable.vue";
 
 export default {
     name: "dashboard-view",

@@ -186,7 +186,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .pagination {
     $pagination-outer-border-color: $secondary;
 

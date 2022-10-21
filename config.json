@@ -1,3 +1,10 @@
 {
-    "API_URL": "http://non-existing-url.com"
+    "APP_DEBUG": true,
+    "APP_ENV": "dev",
+    "APP_URL": "http://localhost:80",
+    "BROADCAST_URL": "",
+    "MIX_PUSHER_APP_KEY": "",
+    "MIX_PUSHER_SOCKET_HOST": "",
+    "MIX_PUSHER_PORT": 443,
+    "MIX_PUSHER_SCHEME": "https"
 }

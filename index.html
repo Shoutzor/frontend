@@ -33,10 +33,15 @@
   </head>
   <body class="antialiased theme-dark fixed-header">    
     <div id="shoutzor" v-cloak>
-      <div class="load-screen text-center">
-        <img svg-inline src="/src/assets/images/shoutzor-logo.svg" class="logo" alt="Shoutz0r logo"/>
-        <div class="center-block">
-          <div class="spinner-border mt-5" role="status"></div>
+      <div class="container">
+        <div class="row">
+          <!-- This uses the same styling & structure as the LoadScreen component -->
+          <div class="col load-screen text-center">
+            {{logo}}
+            <div class="center-block">
+              <div class="spinner-border mt-5" role="status"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

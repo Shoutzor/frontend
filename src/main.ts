@@ -2,7 +2,6 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import mitt from 'mitt';
 import Pusher from 'pusher-js';
-import PerfectScrollbar from 'vue3-perfect-scrollbar';
 import { createApp } from 'vue'
 import {BootstrapIconsPlugin} from 'bootstrap-icons-vue';
 import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
@@ -17,141 +16,127 @@ import { MediaPlayerPlugin } from "@js/plugins/MediaPlayer.js";
 import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
 import {UploadManagerPlugin} from "@js/plugins/UploadManager.js";
 
+// Predefine instances
+let emitter;
+let echoClient : Echo;
+let httpLink : HttpLink;
+let apolloClient : ApolloClient<any>;
+
+// Create the Vue App instance
+const app = createApp(App);
+
 // First, fetch the local config containing only the API_URL
 fetch('/config.json')
 .then(res => res.json())
 .then(config => {
-    // Predefine instances
-    let emitter;
-    let echoClient : Echo;
-    let httpLink : HttpLink;
-    let apolloClient : ApolloClient<any>;
+    // The UploadManager still uses Axios. Ideally this also should be replaced by GraphQL later on
+    // Currently not the case because I haven't figured out how to track upload progress.
+    axios.defaults.baseURL = config.APP_URL + '/api';
+    axios.defaults.headers.common['Accept'] = 'application/json';
 
-    // Create the Vue App instance
-    const app = createApp(App);
+    emitter = mitt();
+    (<any>window).Pusher = Pusher;
 
-    // Next, fetch the config from the backend 
-    fetch(config.API_URL + '/frontend_config.json')
-    .then(res => res.json())
-    .then(config => {
-        // The UploadManager still uses Axios. Ideally this also should be replaced by GraphQL later on
-        // Currently not the case because I haven't figured out how to track upload progress.
-        axios.defaults.baseURL = config.APP_URL + '/api';
-        axios.defaults.headers.common['Accept'] = 'application/json';
-
-        emitter = mitt();
-        (<any>window).Pusher = Pusher;
-
-        echoClient = new Echo({
-            broadcaster: 'pusher',
-            key: config.MIX_PUSHER_APP_KEY,
-            wsHost: config.MIX_PUSHER_SOCKET_HOST,
-            wsPort: config.MIX_PUSHER_PORT,
-            wssPort: config.MIX_PUSHER_PORT,
-            forceTLS: config.MIX_PUSHER_SCHEME === 'https',
-            encrypted: true,
-            disableStats: true,
-            enabledTransports: ['ws', 'wss'],
-            authEndpoint: '/graphql/subscriptions/auth'
-        });
-
-        // HTTP connection to the API
-        httpLink = new HttpLink({
-            // You should use an absolute URL here
-            uri: config.APP_URL + '/graphql',
-            headers: {}
-        });
-
-        // Create the apollo client
-        apolloClient = new ApolloClient({
-            link: ApolloLink.from([
-                createLighthouseSubscriptionLink(echoClient),
-                httpLink
-            ]),
-            cache,
-            connectToDevTools: config.APP_DEBUG,
-            defaultOptions: {
-                query: {
-                    fetchPolicy: 'cache-first',
-                },
-            }
-        });
-
-        app.config.globalProperties.$filters = {
-            formatTime(seconds: string) {
-                let sec_num = parseInt(seconds, 10); // don't forget the second param
-                let h = Math.floor(sec_num / 3600);
-                let m = Math.floor((sec_num - (h * 3600)) / 60);
-                let s = sec_num - (h * 3600) - (m * 60);
-
-                let hrs = "";
-                let mins = "";
-                let secs = "";
-
-                //If hours eq 0, hide it
-                if (h > 0) {
-                    if (h < 10) {
-                        hrs = "0" + h + ":";
-                    } else {
-                        hrs = h + ":";
-                    }
-                }
-
-                if (m < 10) {
-                    mins = "0" + m;
-                }
-                if (s < 10) {
-                    secs = "0" + s;
-                }
-                return hrs + mins + ':' + secs;
-            }
-        };
-
-        app.provide(DefaultApolloClient, apolloClient);
-        provideApolloClient(apolloClient);
-
-        app.config.globalProperties.apollo = apolloClient;
-        app.config.globalProperties.echo = echoClient;
-        app.config.globalProperties.emitter = emitter;
-    })
-    .then(() => {
-        app.use(router)
-        .use(BootstrapControlPlugin)
-        .use(AuthenticationPlugin, {
-            tokenName: 'token',
-            echoClient,
-            httpClient: httpLink,
-            apolloClient
-        })
-        .use(MediaPlayerPlugin, {
-            broadcastUrl: config.BROADCAST_URL,
-            apolloClient,
-            echoClient
-        })
-        .use(UploadManagerPlugin, {
-            echoClient
-        })
-        .use(RequestManagerPlugin)
-        .use(PerfectScrollbar)
-        .use(BootstrapIconsPlugin)
-        .mount('#shoutzor');
-    })
-    .catch((error) => {
-        console.error("An error occured while initializing", error);
-
-        (<any>document).querySelector("#shoutzor .load-screen .center-block").innerHTML = '\
-        <div class="alert alert-danger" role="alert">An error occured while initializing, please try reloading.<br /><br />'+
-        '<strong>Error: </strong>'+error+'<br /><br />' +
-        (error?.stack ? '<strong>Stacktrace:</strong><br /><pre>' + error.stack + '</pre>' : '' ) + 
-        '</div>';
+    echoClient = new Echo({
+        broadcaster: 'pusher',
+        key: config.MIX_PUSHER_APP_KEY,
+        wsHost: config.MIX_PUSHER_SOCKET_HOST,
+        wsPort: config.MIX_PUSHER_PORT,
+        wssPort: config.MIX_PUSHER_PORT,
+        forceTLS: config.MIX_PUSHER_SCHEME === 'https',
+        encrypted: true,
+        disableStats: true,
+        enabledTransports: [config.MIX_PUSHER_SCHEME],
+        authEndpoint: '/graphql/subscriptions/auth'
     });
+
+    // HTTP connection to the API
+    httpLink = new HttpLink({
+        // You should use an absolute URL here
+        uri: config.APP_URL + '/graphql',
+        headers: {}
+    });
+
+    // Create the apollo client
+    apolloClient = new ApolloClient({
+        link: ApolloLink.from([
+            createLighthouseSubscriptionLink(echoClient),
+            httpLink
+        ]),
+        cache,
+        connectToDevTools: config.APP_DEBUG,
+        defaultOptions: {
+            query: {
+                fetchPolicy: 'cache-first',
+            },
+        }
+    });
+
+    app.config.globalProperties.$filters = {
+        formatTime(seconds: string) {
+            let sec_num = parseInt(seconds, 10); // don't forget the second param
+            let h = Math.floor(sec_num / 3600);
+            let m = Math.floor((sec_num - (h * 3600)) / 60);
+            let s = sec_num - (h * 3600) - (m * 60);
+
+            let hrs = "";
+            let mins = "";
+            let secs = "";
+
+            //If hours eq 0, hide it
+            if (h > 0) {
+                if (h < 10) {
+                    hrs = "0" + h + ":";
+                } else {
+                    hrs = h + ":";
+                }
+            }
+
+            if (m < 10) {
+                mins = "0" + m;
+            }
+            if (s < 10) {
+                secs = "0" + s;
+            }
+            return hrs + mins + ':' + secs;
+        }
+    };
+
+    app.provide(DefaultApolloClient, apolloClient);
+    provideApolloClient(apolloClient);
+
+    app.config.globalProperties.apollo = apolloClient;
+    app.config.globalProperties.echo = echoClient;
+    app.config.globalProperties.emitter = emitter;
+
+    app
+    .use(router)
+    .use(BootstrapControlPlugin)
+    .use(AuthenticationPlugin, {
+        tokenName: 'token',
+        echoClient,
+        httpClient: httpLink,
+        apolloClient
+    })
+    .use(MediaPlayerPlugin, {
+        broadcastUrl: config.BROADCAST_URL,
+        apolloClient,
+        echoClient
+    })
+    .use(UploadManagerPlugin, {
+        echoClient
+    })
+    .use(RequestManagerPlugin)
+    .use(BootstrapIconsPlugin)
+    .mount('#shoutzor');
 })
-.catch((error) => {
-    console.error("An error occured while fetching the backend URL", error);
+.catch(error => {
+    console.error("An error occured while initializing", error);
 
     (<any>document).querySelector("#shoutzor .load-screen .center-block").innerHTML = '\
-        <div class="alert alert-danger" role="alert">An error occured while initializing, please try reloading.<br /><br />'+
-        '<strong>Error: </strong>'+error+'<br /><br />' +
-        (error?.stack ? '<strong>Stacktrace:</strong><br /><pre>' + error.stack + '</pre>' : '' ) + 
-        '</div>';
+    <div class="alert alert-danger" role="alert">' +
+        'An error occured while initializing; try reloading or contact an administrator.<br />'+
+        '<strong>Error: </strong>'+error+
+        (error?.stack ? '<br /><br /><strong>Stacktrace:</strong><br /><pre>' + error.stack + '</pre>' : '' ) + 
+    '</div>';
 });

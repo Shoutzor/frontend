@@ -46,9 +46,9 @@
 </template>
 
 <script>
-import { LIST_PERMISSIONS_QUERY } from "@graphql/permissions";
-import { GET_ROLE_QUERY } from "@graphql/roles";
-import PermissionList from "@components/PermissionList";
+import { LIST_PERMISSIONS_QUERY } from "@graphql/permissions.js";
+import { GET_ROLE_QUERY } from "@graphql/roles.js";
+import PermissionList from "@components/PermissionList.vue";
 
 export default {
     name: "admin-roles",

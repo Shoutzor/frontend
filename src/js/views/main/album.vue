@@ -30,11 +30,11 @@
 
 <script>
 import {useQuery} from "@vue/apollo-composable";
-import {defaultAlbumImage} from "@js/config";
-import InformationHeader from "@components/InformationHeader";
-import PopularMedia from "@components/PopularMedia";
-import {ALBUM_QUERY} from "@graphql/album";
-import PopularArtists from "../../../components/PopularArtists";
+import {defaultAlbumImage} from "@js/config.js";
+import {ALBUM_QUERY} from "@graphql/album.js";
+import InformationHeader from "@components/InformationHeader.vue";
+import PopularMedia from "@components/PopularMedia.vue";
+import PopularArtists from "@components/PopularArtists.vue";
 
 export default {
     name: "album-view",
