@@ -9,22 +9,25 @@
 2. [Front-end development](#frontend-development)
 3. [Kindly Supported by](#kindly-supported-by)
 4. [Sponsor this project](#sponsor-this-project)
+5. [Recommended IDE setup](#recommended-ide-setup)
 
 ## Introduction
 
 This is the frontend of shoutz0r.
 
-Built using Vue 3 & Bootstrap.
+Built using Vite, Vue 3 & Bootstrap.
 
 Storybook can be found [here](https://shoutzor.com/storybook/app/master/). The Storybook stories can be found in [this repo](https://github.com/Shoutz0r/storybook).
 Feel free to ask any questions in the `discussions`.
 
-## Frontend development:
+## Front-end development
 
-If you are going to do any work on the frontend, make sure to run `npm run watch`.\
+To run a local webserver with hot-reload you can run:
 
-Sidenote: We use `PurgeCSS` to remove unused CSS from the compiled CSS file.\
-The side-effect of this is that it will only check for used CSS selectors on initial run. If you add any new styling that isn't used anywhere else `npm run watch` will not include this styling yet. Make sure you stop and restart the watcher for these additions to be picked up.
+```sh
+npm run dev
+```
+Make sure to add `shoutzor.local` to your `hosts` file pointing to `127.0.0.1`; The website will then be available at `http://shoutzor.local:5173/`
 
 ## Kindly supported by
 
@@ -36,3 +39,7 @@ The side-effect of this is that it will only check for used CSS selectors on ini
 Shoutz0r is being developed entirely in my spare time. \
 If you like this project, please consider sponsoring it using the button in the sidebar of this repo (or [click here](https://github.com/sponsors/xorinzor) ).\
 Every little bit helps to buy me a beer or pizza, which keeps me going!
+
+## Recommended IDE Setup
+
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
