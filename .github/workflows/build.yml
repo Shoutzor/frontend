@@ -33,6 +33,7 @@ jobs:
         name: Build and push Frontend
         uses: docker/build-push-action@v3
         with:
+          context: .
           file: './Dockerfile'
           push: true
           tags: xorinzor/shoutz0r-frontend:latest
