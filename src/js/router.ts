@@ -48,7 +48,7 @@ const routes = [
             name: 'artist',
             path: '/artist/:id',
             component: Artist,
-            props: ({params}) => ({
+            props: ({ params } : { params : { id: String }}) => ({
                 id: params.id || null
             }),
             meta: {
@@ -58,7 +58,7 @@ const routes = [
             name: 'album',
             path: '/album/:id',
             component: Album,
-            props: ({params}) => ({
+            props: ({params} : { params : { id: String }}) => ({
                 id: params.id || null
             }),
             meta: {
@@ -134,7 +134,7 @@ const routes = [
                             name: 'admin-roles-edit',
                             path: 'edit/:roleId',
                             component: AdminRoleEdit,
-                            props: ({params}) => ({
+                            props: ({params} : { params : { roleId: Number } }) => ({
                                 roleId: Number.parseInt(params.roleId+"", 10) || null
                             }),
                             meta: {
