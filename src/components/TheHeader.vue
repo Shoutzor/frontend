@@ -2,7 +2,7 @@
     <header id="header" class="navbar navbar-dark flex-md-nowrap sticky-top p-0">
         <div class="container-fluid">
             <router-link :to="{name: 'dashboard'}" class="navbar-brand order-1">
-                <img svg-inline src="@static/images/shoutzor-logo.svg" class="navbar-brand-image">
+                <shoutzor-logo class="navbar-brand-image" />
                 <!-- 242 x 54 -->
             </router-link>
             <form action="#" @submit.prevent="search"  class="search-container input-group justify-content-center order-3 order-md-2 pt-2 pt-md-0">
@@ -56,12 +56,14 @@
 <script>
 import BaseButton from "@components/BaseButton.vue";
 import LoginForm from "@components/LoginForm.vue";
+import ShoutzorLogo from "@static/images/shoutzor-logo.svg?component";
 
 export default {
     name: 'the-header',
     components: {
         BaseButton,
-        LoginForm
+        LoginForm,
+        ShoutzorLogo
     },
     data() {
         return {

@@ -1,4 +1,5 @@
 import {createRouter, createWebHashHistory} from "vue-router";
+import { AuthenticationManager } from "./plugins/AuthenticationManager";
 
 import Dashboard from "@js/views/main/dashboard.vue";
 import History from "@js/views/main/history.vue";
@@ -12,9 +13,7 @@ import AdminUserList from "@js/views/admin/user/list.vue";
 import AdminRoleList from "@js/views/admin/role/list.vue";
 import AdminRoleEdit from "@js/views/admin/role/list.vue";
 
-export default createRouter({
-    history: createWebHashHistory(),
-    routes: [
+const routes = [
         {
             name: 'dashboard',
             path: '/',
@@ -147,5 +146,37 @@ export default createRouter({
                 }
             ]
         }
-    ]
-});
+    ];
+
+
+export default function (authManager : AuthenticationManager) {
+    const router = createRouter({ 
+        history: createWebHashHistory(), 
+        routes 
+    });
+
+    router.beforeEach(async (to, from) => {
+        if(!authManager.isInitialized) {
+            await authManager.isInitializedPromise;
+        }
+
+        if("meta" in to) {
+            let m = to.meta;
+
+            // If requiresPermission is set, check if the user has the required permission.
+            if ("requiresPermission" in m && authManager.can(m.requiresPermission) === false) {
+                return false;
+            }
+
+            // If requiresAuth is set, check if the user is authenticated (permission-based is preferred)
+            if ("requiresAuth" in m && m.requiresAuth === true && authManager.isAuthenticated === false) {
+                return false;
+            }
+        }
+
+        // Everything checks out, allow the navigation to continue
+        return true;
+    });
+
+    return router;
+}

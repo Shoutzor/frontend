@@ -7,6 +7,8 @@ import {LOGIN_MUTATION, LOGOUT_MUTATION, WHOAMI_MUTATION, GUEST_PERMISSIONS_QUER
 export class AuthenticationManager {
     #app
 
+    #initializedPromise
+
     #echoClient
     #httpClient
     #apolloClient
@@ -32,7 +34,7 @@ export class AuthenticationManager {
             permissions: []
         });
 
-        this.#initialize();
+        this.#initializedPromise = this.#initialize();
     }
 
     /*
@@ -41,6 +43,10 @@ export class AuthenticationManager {
 
     get isInitialized() {
         return this.#state.isInitialized;
+    }
+
+    get isInitializedPromise() {
+        return this.#initializedPromise;
     }
 
     get isAuthenticated() {
@@ -89,50 +95,31 @@ export class AuthenticationManager {
     }
 
     async #initialize() {
-        let token = localStorage.getItem(this.#tokenName);
-        let sessionPromise = null;
-        let guestPermissionsPromise = await this.#updateGuestPermissions();
+        return new Promise(async (resolve, reject) => {
+            let token = localStorage.getItem(this.#tokenName);
+            let sessionPromise = null;
+            let guestPermissionsPromise = await this.#updateGuestPermissions();
 
-        if(!!token) {
-            this.#setToken(token);
-            sessionPromise = this.#resumeSession();
-            sessionPromise.catch(() => {
-                // If resumeSession failed, this will ensure the guest permissions are set correctly
+            if(!!token) {
+                this.#setToken(token);
+                sessionPromise = this.#resumeSession();
+                sessionPromise.catch(() => {
+                    // If resumeSession failed, this will ensure the guest permissions are set correctly
+                    this.#invalidateSession();
+                })
+            }
+            else {
                 this.#invalidateSession();
-            })
-        }
-        else {
-            this.#invalidateSession();
-        }
-
-        // Once all promises are resolved, the AuthenticationManager has finished initializing
-        Promise.allSettled([guestPermissionsPromise, sessionPromise])
-            .finally(() => {
-                this.#setRouterGuard();
-                this.#state.isInitialized = true;
-            });
-    }
-
-    // Calling this method will set the router guard
-    // The router guard will check if the user has the permissions required by the route being navigated to
-    #setRouterGuard() {
-        this.#app.router.beforeEach(async (to, from) => {
-            if("meta" in to) {
-                let m = to.meta;
-
-                // If requiresPermission is set, check if the user has the required permission.
-                if ("requiresPermission" in m && this.can(m.requiresPermission) === false) {
-                    return false;
-                }
-
-                // If requiresAuth is set, check if the user is authenticated (permission-based is preferred)
-                if ("requiresAuth" in m && m.requiresAuth === true && this.isAuthenticated === false) {
-                    return false;
-                }
             }
 
-            // Everything checks out, allow the navigation to continue
-            return true;
+            // Once all promises are resolved, the AuthenticationManager has finished initializing
+            Promise.allSettled([guestPermissionsPromise, sessionPromise])
+                .finally(() => {
+                    resolve(true);
+                });
+        })
+        .then(() => {
+            this.#state.isInitialized = true;
         });
     }
 

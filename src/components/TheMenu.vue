@@ -24,8 +24,13 @@
 </template>
 
 <script>
+import PerfectScrollbar from './PerfectScrollbar.vue';
+
 export default {
     name: 'the-menu',
+    components: {
+        PerfectScrollbar
+    },
     props: {
         items: {
             type: Array,

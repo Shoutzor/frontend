@@ -4,7 +4,7 @@ import svgLoader from 'vite-svg-loader'
 import path from 'path'
 import fs from 'fs';
 
-// Transforms any <svg> tags by inlining the svg defined in the "src" tag
+// Replaces {{logo}} with the contents of the shoutzor logo SVG
 const htmlInlineSvgLogoPlugin = () => {
   return {
     name: "html-inline-svg-transform",
@@ -16,9 +16,18 @@ const htmlInlineSvgLogoPlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    host: "shoutzor.local",
+    port: 5173,
+    strictPort: true,
+    cors: false
+  },
   plugins: [
     vue(), 
-    svgLoader(),
+    svgLoader({
+      // svgo removes the "viewBox" attribute of the shoutzor-logo SVG causing it to scale inproperly
+      svgo: false
+    }),
     htmlInlineSvgLogoPlugin()
   ],
   resolve: {

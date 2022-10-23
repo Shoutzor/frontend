@@ -2,7 +2,7 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import mitt from 'mitt';
 import Pusher from 'pusher-js';
-import { createApp } from 'vue'
+import { createApp, VueElement } from 'vue'
 import {BootstrapIconsPlugin} from 'bootstrap-icons-vue';
 import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
 import {ApolloClient, ApolloLink, HttpLink } from '@apollo/client/core'
@@ -110,7 +110,6 @@ fetch('/config.json')
     app.config.globalProperties.emitter = emitter;
 
     app
-    .use(router)
     .use(BootstrapControlPlugin)
     .use(AuthenticationPlugin, {
         tokenName: 'token',
@@ -118,6 +117,7 @@ fetch('/config.json')
         httpClient: httpLink,
         apolloClient
     })
+    .use(router(app.config.globalProperties.auth))
     .use(MediaPlayerPlugin, {
         broadcastUrl: config.BROADCAST_URL,
         apolloClient,
