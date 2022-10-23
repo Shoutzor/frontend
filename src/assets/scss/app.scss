@@ -1,0 +1,23 @@
+//Include the vue3-perfect-scrollbar module styling
+@import "~vue-slider-component/theme/default.css";
+
+//
+// Our theme configuration
+//
+@import "theme";
+
+//
+// Add bootstrap
+//
+@import "~bootstrap";
+
+//
+// Our styling
+//
+@import "custom-theme/animations";
+@import "custom-theme/helpers";
+@import "custom-theme/style";
+
+// Include styling overrides
+@import "overrides/bootstrap";
+@import "overrides/vue-slider";
