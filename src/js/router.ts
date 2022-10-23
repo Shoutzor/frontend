@@ -161,7 +161,7 @@ export default function (authManager : AuthenticationManager) {
         }
 
         if("meta" in to) {
-            let m = to.meta;
+            const m = to.meta;
 
             // If requiresPermission is set, check if the user has the required permission.
             if ("requiresPermission" in m && authManager.can(m.requiresPermission) === false) {

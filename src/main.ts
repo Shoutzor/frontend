@@ -74,10 +74,10 @@ fetch('/config.json')
 
     app.config.globalProperties.$filters = {
         formatTime(seconds: string) {
-            let sec_num = parseInt(seconds, 10); // don't forget the second param
-            let h = Math.floor(sec_num / 3600);
-            let m = Math.floor((sec_num - (h * 3600)) / 60);
-            let s = sec_num - (h * 3600) - (m * 60);
+            const sec_num = parseInt(seconds, 10); // don't forget the second param
+            const h = Math.floor(sec_num / 3600);
+            const m = Math.floor((sec_num - (h * 3600)) / 60);
+            const s = sec_num - (h * 3600) - (m * 60);
 
             let hrs = "";
             let mins = "";
