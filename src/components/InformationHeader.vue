@@ -52,7 +52,7 @@ export default {
             background-repeat: repeat;
             background-position: -7px 0px;
             background-size: contain;
-            background-image: url("~@static/images/nowplaying_overlay.png");
+            background-image: url("~static/images/nowplaying_overlay.png");
         }
     }
 
