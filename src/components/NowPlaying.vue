@@ -23,7 +23,7 @@
 import ArtistList from "@components/ArtistList.vue";
 import UserList from "@components/UserList.vue";
 
-import {defaultMediaImage} from "@js/config";
+import {defaultMediaImage} from "../js/config";
 import InformationHeader from "@components/InformationHeader.vue";
 
 export default {

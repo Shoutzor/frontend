@@ -62,7 +62,7 @@ import PlayButton from "@components/PlayButton.vue";
 import ArtistList from "@components/ArtistList.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
 
-import {defaultMediaImage} from "@js/config";
+import {defaultMediaImage} from "../js/config";
 
 export default {
     name: 'the-mediaplayer',

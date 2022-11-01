@@ -1,9 +1,5 @@
-import AlbumImage from '@static/images/album_placeholder.jpg';
-import ArtistImage from '@static/images/artist_placeholder.png';
-import MediaImage from '@static/images/album_placeholder.jpg';
-
-export const defaultAlbumImage = AlbumImage;
-export const defaultArtistImage = ArtistImage;
-export const defaultMediaImage = MediaImage;
+export const defaultAlbumImage = '/images/placeholder/album_placeholder.jpg';
+export const defaultArtistImage = '/images/placeholder/artist_placeholder.png';
+export const defaultMediaImage = '/images/placeholder/album_placeholder.jpg';
 
 export const publicStoragePath = '/storage/';
