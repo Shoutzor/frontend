@@ -101,6 +101,10 @@ export default {
                             name: "Roles",
                             route: "admin-roles",
                             icon: "b-icon-person-check-fill"
+                        }, {
+                            name: "Settings",
+                            route: "admin-settings",
+                            icon: "b-icon-gear-fill"
                         }]
                     }
                 ]
