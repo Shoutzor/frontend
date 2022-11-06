@@ -137,7 +137,7 @@ const routes = [
                             path: 'create',
                             component: AdminRoleCreate,
                             meta: {
-                                requiresPermission: "admin.role.edit",
+                                requiresPermission: "admin.role.create",
                                 requiresAuth: true
                             }
                         }, {

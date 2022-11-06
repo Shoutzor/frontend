@@ -3,21 +3,19 @@ import {ADDREQUEST_MUTATION} from "@graphql/requests";
 
 export class RequestManager {
 
+    #app
     #bootstrapControl
     #modalId
 
-    constructor(bootstrapControl) {
+    constructor(app, bootstrapControl) {
+        this.#app = app;
         this.#bootstrapControl = bootstrapControl;
         this.#modalId = null;
     }
 
     request(id, title) {
         // Making sure nothing in the media title can cause an XSS vulnerability
-        let escapedTitle = String(title)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+        let escapedTitle = this.#app.antiXSS(title);
 
         this.#modalId = this.#bootstrapControl.showModal({
             onConfirm: () => { this.#makeRequest(id); },
@@ -59,6 +57,6 @@ export class RequestManager {
 
 export const RequestManagerPlugin = {
     install: (app, _options) => {
-        app.config.globalProperties.requestManager = new RequestManager(app.config.globalProperties.bootstrapControl);
+        app.config.globalProperties.requestManager = new RequestManager(app, app.config.globalProperties.bootstrapControl);
     }
 }

@@ -153,7 +153,7 @@ export default {
                 }
 
                 // If meta.requiresPermission is set, check if the user has the configured permission
-                if("requiresPermission" in m && this.auth.can(m.requiresPermission) === false) {
+                if("requiresPermission" in m && this.can(m.requiresPermission) === false) {
                     return false;
                 }
             }

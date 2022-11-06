@@ -92,11 +92,11 @@ export default {
         nowplaying() { return this.mediaPlayer.lastPlayed; },
         timePassed() {
             let p = this.mediaPlayer.trackPosition;
-            return (!p && p !== 0) ? null : this.$filters.formatTime(p);
+            return (!p && p !== 0) ? null : this.formatTime(p);
         },
         timeDuration() {
             let d = this.mediaPlayer.lastPlayed?.media?.duration;
-            return (!d && d !== 0) ? null : this.$filters.formatTime(d);
+            return (!d && d !== 0) ? null : this.formatTime(d);
         },
 
         percentagePlayed() {

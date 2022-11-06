@@ -246,6 +246,19 @@ export class AuthenticationManager {
 
 export const AuthenticationPlugin = {
     install: (app, options) => {
-        app.config.globalProperties.auth = new AuthenticationManager(app, options.tokenName, options.echoClient, options.httpClient, options.apolloClient);
+        const auth = new AuthenticationManager(app, options.tokenName, options.echoClient, options.httpClient, options.apolloClient)
+        app.config.globalProperties.auth = auth;
+
+        /**
+         * Add `can` mixin method
+         * Can be used in Vue templates to determine whether or not to show elements
+         */
+        app.mixin({
+            methods: {
+                can: function(permission) {
+                    return auth.can(permission);
+                }
+            }
+        });
     }
 }

@@ -14,7 +14,7 @@ export default {
 
     data() {
         return {
-            displayTime: this.$filters.formatTime(this.seconds)
+            displayTime: this.formatTime(this.seconds)
         }
     }
 }

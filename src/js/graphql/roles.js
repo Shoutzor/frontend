@@ -57,3 +57,12 @@ export const UPDATE_ROLE_MUTATION = gql`
             id
         }
     }`;
+
+export const DELETE_ROLE_MUTATION = gql`
+    mutation delete_role_mutation($id: ID!) {
+        deleteRole(
+            id: $id
+        ){
+            id
+        }
+    }`;

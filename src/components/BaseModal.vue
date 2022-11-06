@@ -126,7 +126,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .modal {
     color: $dark;
 }

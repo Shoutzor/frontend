@@ -24,7 +24,7 @@ export default {
             return this.auth.isInitialized;
         },
         hasAccess() {
-            return this.auth.can("website.access");
+            return this.can("website.access");
         }
     }
 }
