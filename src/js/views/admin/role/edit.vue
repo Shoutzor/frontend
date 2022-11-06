@@ -207,10 +207,10 @@ export default {
 
             updateRoleMutation()
             .then(result => {
-                this.bootstrapControl.showToast("success", "Permissions updated");
+                this.bootstrapControl.showToast("success", "Role saved");
             })
             .catch(error => {
-                this.bootstrapControl.showToast("danger", "Failed to save the permissions, error:" + error);
+                this.bootstrapControl.showToast("danger", "Failed to save the role, error:" + error);
             })
             .finally(() => {
                 this.saving = false;
