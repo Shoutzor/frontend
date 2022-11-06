@@ -31,6 +31,19 @@ export const GET_ROLE_QUERY = gql`
         }
     }`;
 
+export const CREATE_ROLE_MUTATION = gql`
+    mutation create_role_mutation($name: String!, $description: String!, $permissions: [ID!]!) {
+        createRole(
+            name: $name
+            description: $description
+            permissions: {
+                sync: $permissions
+            }
+        ){
+            id
+        }
+    }`;
+
 export const UPDATE_ROLE_MUTATION = gql`
     mutation update_role_mutation($id: ID!, $name: String, $description: String, $permissions: [ID!]!) {
         updateRole(

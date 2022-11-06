@@ -11,6 +11,7 @@ import Search from "@js/views/main/search.vue";
 import AdminDashboard from "@js/views/admin/dashboard.vue";
 import AdminUserList from "@js/views/admin/user/list.vue";
 import AdminRoleList from "@js/views/admin/role/list.vue";
+import AdminRoleCreate from "@js/views/admin/role/create.vue";
 import AdminRoleEdit from "@js/views/admin/role/edit.vue";
 import AdminSettings from "@js/views/admin/settings.vue";
 
@@ -129,6 +130,14 @@ const routes = [
                             component: AdminRoleList,
                             meta: {
                                 requiresPermission: "admin.role.list",
+                                requiresAuth: true
+                            }
+                        }, {
+                            name: 'admin-roles-create',
+                            path: 'create',
+                            component: AdminRoleCreate,
+                            meta: {
+                                requiresPermission: "admin.role.edit",
                                 requiresAuth: true
                             }
                         }, {
