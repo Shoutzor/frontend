@@ -3,9 +3,10 @@
         <template v-if="permissions.length > 0">
             <permission-item
                 v-for="(permission, index) in permissions"
-                :key="permission.id"
+                :key="permission.name"
                 :hasPermission="activePermissions.indexOf(permission.name) !== -1"
-                :permission="permission"/>
+                :permission="permission"
+                @change="onChange" />
         </template>
     </div>
 </template>
@@ -17,6 +18,7 @@ export default {
     components: {
         PermissionItem
     },
+    emits: ['change'],
     props: {
         permissions: {
             type: Array,
@@ -30,6 +32,13 @@ export default {
     computed: {
         activePermissions() {
             return this.hasPermissions.map(p => p.name);
+        }
+    },
+    setup(props, {emit}) {
+        return {
+            async onChange(e) {
+                emit('change', e);
+            }
         }
     }
 }

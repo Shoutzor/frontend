@@ -8,7 +8,7 @@
                 <p>An error occured while loading the settings</p>
                 <base-button @click="getData" class="btn-primary">Retry</base-button>
             </template>
-            <form v-else action="#" method="post">
+            <form v-else>
                 <formitem-checkbox 
                     v-for="setting in settings"
                     :key="setting.key"
@@ -17,7 +17,7 @@
                     :description="setting.description"
                     :isSwitch="true"
                     :checked="setting.value === 'true'"
-                    @change="updateSetting"
+                    @change="saveData"
                     />
             </form>
         </div>
@@ -59,7 +59,6 @@ export default {
             })
             .then((result) => {
                 this.settings = result.data.settings;
-                console.dir(this.settings);
             })
             .catch((error) => {
                 this.error = true;
@@ -69,11 +68,8 @@ export default {
                 this.loading = false;
             });
         },
-        async updateSetting(e) {
-            console.log(e);
-            let setting = e.target;
-            console.log("called", setting.id, setting.checked);
-
+        async saveData(e) {
+            const setting = e.target;
             const { mutate: updateSettingMutation } = useMutation(UPDATE_SETTING_MUTATION, {
                 fetchPolicy: 'no-cache',
                 variables: {

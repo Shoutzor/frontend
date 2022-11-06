@@ -1,6 +1,6 @@
 <template>
     <div :class="classes">
-        <input :checked="checked" class="form-check-input" type="checkbox" :id="id" :role="isSwitch ? 'switch' : ''">
+        <input v-model="checked" class="form-check-input" type="checkbox" :id="id" :role="isSwitch ? 'switch' : ''">
         <div class="text-truncate">
             <label :for="id">
                 <div class="text-body d-block">{{ name }}</div>

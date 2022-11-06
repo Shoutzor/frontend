@@ -5,6 +5,7 @@
         :description="permission.description"
         :isSwitch="true"
         :checked="hasPermission"
+        :data-permission="permission.name"
         />
 </template>
 
