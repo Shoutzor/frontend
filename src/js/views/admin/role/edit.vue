@@ -54,7 +54,7 @@
 <script>
 import { useMutation } from "@vue/apollo-composable";
 import { LIST_PERMISSIONS_QUERY } from "@graphql/permissions.js";
-import { GET_ROLE_QUERY, UPDATE_ROLE_PERMISSIONS_MUTATION } from "@graphql/roles.js";
+import { GET_ROLE_QUERY, UPDATE_ROLE_MUTATION } from "@graphql/roles.js";
 import BaseButton from "@components/BaseButton.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
 import PermissionList from "@components/PermissionList.vue";
@@ -200,7 +200,7 @@ export default {
                 variables['description'] = this.role.description;
             }
 
-            const { mutate: updateRoleMutation } = useMutation(UPDATE_ROLE_PERMISSIONS_MUTATION, {
+            const { mutate: updateRoleMutation } = useMutation(UPDATE_ROLE_MUTATION, {
                 fetchPolicy: 'no-cache',
                 variables
             });
