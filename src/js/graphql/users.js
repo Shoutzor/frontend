@@ -20,3 +20,12 @@ export const LIST_USERS_QUERY = gql`
             }
         }
     }`;
+
+export const DELETE_USER_MUTATION = gql`
+    mutation delete_user_mutation($id: ID!) {
+        deleteUser(
+            id: $id
+        ){
+            id
+        }
+    }`;

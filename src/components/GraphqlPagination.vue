@@ -122,8 +122,9 @@ export default {
             this.error = error;
 
             onResult((result) => {
-                this.totalPages = result.data.roles.paginatorInfo.lastPage;
-                this.itemsOnPage = result.data.roles.data;
+                const data = result.data[Object.keys(result.data)[0]];
+                this.totalPages = data.paginatorInfo.lastPage;
+                this.itemsOnPage = data.data;
             });
         }
     }

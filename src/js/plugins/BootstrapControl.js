@@ -124,6 +124,7 @@ export class BootstrapControl {
             this.#modalInstances[id] = new Modal(modalEl);
             this.#modalInstances[id].show();
 
+            // Remove a modal after it's hidden
             modalEl.addEventListener('hidden.bs.modal', () => {
                 this.#removeModal(id);
             });
@@ -132,6 +133,11 @@ export class BootstrapControl {
         return id;
     }
 
+    /**
+     * Hides the modal
+     * the modal will be removed after the animation completes
+     * @param {*} id 
+     */
     hideModal(id) {
         this.#modalInstances[id].hide();
     }
