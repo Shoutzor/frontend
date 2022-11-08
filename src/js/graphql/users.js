@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const LIST_USERS_QUERY = gql`
-    query getUsers($page: Int, $limit: Int) {
+    query list_users_query($page: Int, $limit: Int) {
         users(page: $page, first: $limit) {
             paginatorInfo{
                 lastPage

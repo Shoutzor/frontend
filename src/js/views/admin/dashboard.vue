@@ -5,7 +5,7 @@
                 <div class="card card-sm">
                     <div class="card-body d-flex align-items-center">
                         <span class="bg-lime-lt avatar mr-3">
-                            <users-icon></users-icon>
+                            <b-icon-people-fill />
                         </span>
                         <div class="ms-3 lh-sm">
                             <div class="strong">
@@ -24,7 +24,12 @@
 </template>
 
 <script>
+import { BIconPeopleFill } from 'bootstrap-icons-vue';
+
 export default {
-    name: "admin-dashboard"
+    name: "admin-dashboard",
+    components: {
+        BIconPeopleFill
+    }
 };
 </script>

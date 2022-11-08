@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <h1 class="mb-4">Manage Users</h1>
 
-            <graphql-paginator
+            <graphql-pagination
                 :queryObj="LIST_USERS_QUERY"
                 :limit="8"
                 v-slot="props"
@@ -43,17 +43,17 @@
                         </tr>
                     </template>
                 </base-table>
-            </graphql-paginator>
+            </graphql-pagination>
         </div>
     </div>
 </template>
 
 <script>
 import { LIST_USERS_QUERY } from "@graphql/users.js";
-import GraphqlPaginator from "@components/GraphqlPaginator.vue";
-import BaseTable from "@components/BaseTable.vue";
-import RoleList from "@components/RoleList.vue";
 import BaseButton from "@components/BaseButton.vue";
+import BaseTable from "@components/BaseTable.vue";
+import GraphqlPagination from "@components/GraphqlPagination.vue";
+import RoleList from "@components/RoleList.vue";
 
 export default {
     name: "admin-users",
@@ -61,7 +61,7 @@ export default {
         BaseButton,
         RoleList,
         BaseTable,
-        GraphqlPaginator
+        GraphqlPagination
     },
     data() {
         return {

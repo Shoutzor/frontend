@@ -2,12 +2,11 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import mitt from 'mitt';
 import Pusher from 'pusher-js';
-import { createApp, VueElement } from 'vue'
+import { createApp } from 'vue'
 import {BootstrapIconsPlugin} from 'bootstrap-icons-vue';
 import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
-import {ApolloClient, ApolloLink, HttpLink } from '@apollo/client/core'
+import {ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client/core'
 import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subscription-link";
-import { cache } from "@graphql/cache.js";
 import router from "@js/router";
 import App from "@js/views/App.vue";
 import { AuthenticationPlugin } from "@js/plugins/AuthenticationManager.js";
@@ -63,7 +62,7 @@ fetch('/config.json')
             createLighthouseSubscriptionLink(echoClient),
             httpLink
         ]),
-        cache,
+        cache: new InMemoryCache(),
         connectToDevTools: config.APP_DEBUG,
         defaultOptions: {
             query: {

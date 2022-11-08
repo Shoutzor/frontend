@@ -10,7 +10,7 @@
                 Create Role
             </router-link>
 
-            <graphql-paginator
+            <graphql-pagination
                 :queryObj="LIST_ROLES_QUERY"
                 :limit="8"
                 v-slot="props"
@@ -57,7 +57,7 @@
                         </tr>
                     </template>
                 </base-table>
-            </graphql-paginator>
+            </graphql-pagination>
         </div>
     </div>
 </template>
@@ -65,7 +65,7 @@
 <script>
 import { useMutation } from "@vue/apollo-composable";
 import { LIST_ROLES_QUERY, DELETE_ROLE_MUTATION } from "@graphql/roles.js";
-import GraphqlPaginator from "@components/GraphqlPaginator.vue";
+import GraphqlPagination from "@components/GraphqlPagination.vue";
 import BaseTable from "@components/BaseTable.vue";
 import BaseButton from "@components/BaseButton.vue";
 
@@ -74,7 +74,7 @@ export default {
     components: {
         BaseButton,
         BaseTable,
-        GraphqlPaginator
+        GraphqlPagination
     },
     data() {
         return {
@@ -99,8 +99,6 @@ export default {
             });
         },
         async deleteRole(roleId) {
-            console.log("deleting " + roleId);
-
             let modalProps = this.bootstrapControl.getModalProperties(this.modalId);
             modalProps.loading = true;
 
@@ -108,7 +106,10 @@ export default {
                 fetchPolicy: 'no-cache',
                 variables: {
                     id: roleId,
-                }
+                },
+                refetchQueries: [
+                    'list_roles_query'
+                ]
             });
 
             deleteRoleMutation()

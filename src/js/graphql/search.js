@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const SEARCH_QUERY = gql`
-    query searchQuery($q: String!) {
+    query search_query($q: String!) {
         search(q: $q) {
             media {
                 id

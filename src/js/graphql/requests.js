@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const LASTPLAYED_MUTATION = gql`
-    mutation lastPlayed {
+    mutation lastplayed_mutation {
         lastPlayed {
             request {
                 id
@@ -24,7 +24,7 @@ export const LASTPLAYED_MUTATION = gql`
     }`;
 
 export const COMINGUP_QUERY = gql`
-    query getRequests {
+    query comingup_query {
         requests(where: { column: PLAYED_AT, operator: IS_NULL }) {
             paginatorInfo{
                 total
@@ -52,7 +52,7 @@ export const COMINGUP_QUERY = gql`
     }`;
 
 export const HISTORY_QUERY = gql`
-    query getHistory {
+    query history_query {
         requests(
             where: { column: PLAYED_AT, operator: IS_NOT_NULL }
             orderBy: { column: "played_at", order: DESC }
@@ -87,7 +87,7 @@ export const HISTORY_QUERY = gql`
     }`;
 
 export const ADDREQUEST_MUTATION = gql`
-    mutation addRequest($id: ID!) {
+    mutation addrequest_mutation($id: ID!) {
         addRequest(id: $id) {
             success
             message
@@ -95,7 +95,7 @@ export const ADDREQUEST_MUTATION = gql`
     }`;
 
 export const REQUESTADDED_SUBSCRIPTION = gql`
-    subscription onRequestAdded {
+    subscription requestadded_subscription {
         requestAdded {
             id
             media {

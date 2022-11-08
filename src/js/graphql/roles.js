@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const LIST_ROLES_QUERY = gql`
-    query getRoles($page: Int, $limit: Int) {
+    query list_roles_query($page: Int, $limit: Int) {
         roles(page: $page, first: $limit) {
             paginatorInfo{
                 lastPage
@@ -17,7 +17,7 @@ export const LIST_ROLES_QUERY = gql`
     }`;
 
 export const GET_ROLE_QUERY = gql`
-    query getRole($id: ID) {
+    query get_role_query($id: ID) {
         role(id: $id) {
             id
             name

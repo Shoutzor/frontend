@@ -1,27 +1,33 @@
 <template>
-    <div class="graphql-paginator">
+    <base-pagination
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :on-navigate="onNavigate"
+        >
         <slot name="loading" v-if="isLoading">
             <base-spinner />
         </slot>
 
-        <slot :itemsOnPage="itemsOnPage" v-else></slot>
+        <slot name="error" :refresh="refresh" v-else-if="error">
+            <p>Failed loading the data</p>
+            <base-button @click="refresh">Retry</base-button>
+        </slot>
 
-        <BasePagination
-            v-model="currentPage"
-            :totalPages="totalPages"
-            :onNavigate="onNavigate">
-        </BasePagination>
-    </div>
+        <slot :itemsOnPage="itemsOnPage" v-else></slot>
+    </base-pagination>
 </template>
 
 <script>
 import {computed, reactive} from "vue";
+import { useQuery } from "@vue/apollo-composable";
+import BaseButton from "@components/BaseButton.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
 import BasePagination from "@components/BasePagination.vue";
 
 export default {
-    name: 'graphql-paginator',
+    name: 'graphql-pagination',
     components: {
+        BaseButton,
         BaseSpinner,
         BasePagination
     },
@@ -59,6 +65,7 @@ export default {
     data() {
         return {
             isLoading: true,
+            error: null,
             currentPage: 1,
             totalPages: 1,
             itemsOnPage: []
@@ -91,32 +98,32 @@ export default {
 
             await this.loadPage(page);
         },
+        async refresh() {
+            this.loadPage(this.currentPage);
+        },
         async loadPage(page) {
-            this.beforePageChange();
-
-            this.isLoading = true;
             this.currentPage = page;
 
-            await this.apollo.query({
-                query: this.queryObj,
+            const { 
+                onResult,
+                loading,
+                error
+            } = useQuery(this.queryObj, {
                 variables: {
                     page: this.currentPage,
                     limit: this.limit,
                     where: this.where
                 }
-            })
-            .then((result) => {
-                let data = Object.values(result.data)[0];
-                this.totalPages = data.paginatorInfo.lastPage;
-                this.itemsOnPage = data.data;
-                this.afterPageChange();
-            })
-            .catch((error) => {
-                this.bootstrapControl.showToast("danger", "Could not load the results, error:" + error);
-                this.afterPageChangeError();
-            })
-            .finally(() => {
-                this.isLoading = false;
+            }, {
+                fetchPolicy: "no-cache"
+            });
+
+            this.isLoading = loading;
+            this.error = error;
+
+            onResult((result) => {
+                this.totalPages = result.data.roles.paginatorInfo.lastPage;
+                this.itemsOnPage = result.data.roles.data;
             });
         }
     }

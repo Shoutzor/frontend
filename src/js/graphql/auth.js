@@ -1,14 +1,14 @@
  import gql from "graphql-tag";
 
 export const LOGIN_MUTATION = gql`
-    mutation login($input: LoginInput!) {
+    mutation login_mutation($input: LoginInput!) {
         login(input: $input) {
             token
         }
     }`;
 
 export const LOGOUT_MUTATION = gql`
-    mutation logout {
+    mutation logout_mutation {
         logout {
             status
             message
@@ -16,7 +16,7 @@ export const LOGOUT_MUTATION = gql`
     }`;
 
 export const GUEST_PERMISSIONS_QUERY = gql`
-    query GuestPermissions {
+    query guest_permissions_query {
         role(name: "guest") {
             permissions {
                 name
@@ -25,7 +25,7 @@ export const GUEST_PERMISSIONS_QUERY = gql`
     }`;
 
 export const WHOAMI_MUTATION = gql`
-    mutation whoami {
+    mutation whoami_mutation {
         whoami {
             user {
                 id

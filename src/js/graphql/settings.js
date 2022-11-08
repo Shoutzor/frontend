@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const SETTING_QUERY = gql`
-    query getAlbum($id: ID!) {
+    query setting_query($id: ID!) {
         album(id: $id) {
             id,
             image,
@@ -11,7 +11,7 @@ export const SETTING_QUERY = gql`
     }`;
 
 export const ALL_SETTINGS_QUERY = gql`
-    query all_settings {
+    query all_settings_query {
         settings {
             key
             value
@@ -22,7 +22,7 @@ export const ALL_SETTINGS_QUERY = gql`
     }`;
 
 export const ALL_NON_READONLY_SETTINGS_QUERY = gql`
-    query all_non_readonly_settings {
+    query all_non_readonly_settings_query {
         settings(readonly: false) {
             key
             value
