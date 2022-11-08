@@ -12,15 +12,31 @@
                     :hoverable="true">
                     <template #header>
                         <tr>
-                            <th>Username</th>
-                            <th>Role(s)</th>
-                            <th>Actions</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Role(s)</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </template>
                     <template #default>
                         <tr 
                             v-if="props.itemsOnPage.length > 0"
                             v-for="user in props.itemsOnPage">
+                            <td class="min">
+                                <base-avatar v-if="user.blocked" type="danger">
+                                    <b-icon-x-circle />
+                                </base-avatar>
+
+                                <base-avatar 
+                                    v-else-if="user.email_verified_at && user.approved" 
+                                    type="success">
+                                    <b-icon-check-circle />
+                                </base-avatar>
+
+                                <base-avatar v-else type="secondary">
+                                    <b-icon-question-circle />
+                                </base-avatar>
+                            </td>
                             <td>
                                 {{ user.username }}
                             </td>
@@ -33,7 +49,7 @@
                                 <div class="hstack gap-2">
                                     <base-button class="btn-outline-primary">Edit</base-button>
                                     <base-button 
-                                        v-if="can('admin.user.delete')"
+                                        v-if="user_self.id !== user.id && can('admin.user.delete')"
                                         class="btn-outline-danger"
                                         @click="onDeleteClick(user)">
                                         Delete
@@ -52,9 +68,11 @@
 </template>
 
 <script>
+import { BIconXCircle, BIconCheckCircle, BIconQuestionCircle } from 'bootstrap-icons-vue';
 import { useMutation } from "@vue/apollo-composable";
 import { LIST_USERS_QUERY, DELETE_USER_MUTATION } from "@graphql/users.js";
 import BaseButton from "@components/BaseButton.vue";
+import BaseAvatar from "@components/BaseAvatar.vue";
 import BaseTable from "@components/BaseTable.vue";
 import GraphqlPagination from "@components/GraphqlPagination.vue";
 import RoleList from "@components/RoleList.vue";
@@ -62,6 +80,10 @@ import RoleList from "@components/RoleList.vue";
 export default {
     name: "admin-users",
     components: {
+        BIconXCircle,
+        BIconCheckCircle,
+        BIconQuestionCircle,
+        BaseAvatar,
         BaseButton,
         RoleList,
         BaseTable,
@@ -73,8 +95,18 @@ export default {
             modalId: null
         };
     },
+    computed: {
+        user_self() {
+            return this.auth.user;
+        }
+    },
     methods: {
         async onDeleteClick(user) {
+            if(this.user_self.id === user.id) {
+                this.bootstrapControl.showToast("danger", "You cannot delete your own account");
+                return;
+            }
+
             this.modalId = this.bootstrapControl.showModal({
                 onConfirm: () => { this.deleteUser(user.id); },
                 body: `Are you sure you want to delete: <strong>${user.username}</strong>?`,

@@ -14,7 +14,6 @@ $azure: #45aaf2;
 $lime: #7bd235;
 $gray: #adb5bd;
 $white: #efeff5;
-//$black: #212121;
 $black: #212121;
 
 $primary: #79dfc1;
@@ -25,7 +24,7 @@ $light: $white;
 $success: $green;
 $danger: $red;
 $info: $azure;
-$warning: $orange;
+$warning: $yellow;
 
 //Media file colors
 $audio-default: #467fcf;
@@ -124,6 +123,9 @@ $pagination-hover-bg:               $dark;
 $pagination-hover-border-color:     $pagination-border-color;
 $pagination-active-color:           $black;
 $pagination-active-bg:              $primary;
+
+$badge-font-size: 0.85em;
+$badge-color: $white;
 
 /*
  * Shoutz0r variables

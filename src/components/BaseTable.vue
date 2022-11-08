@@ -74,3 +74,14 @@ export default {
     }
 };
 </script>
+
+<style>
+td {
+    width: auto;
+}
+
+td.min {
+    width: 1%;
+    white-space: nowrap;
+}
+</style>

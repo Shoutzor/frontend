@@ -12,6 +12,8 @@ export const LIST_USERS_QUERY = gql`
                 username
                 created_at
                 email_verified_at
+                approved
+                blocked
                 roles {
                     id
                     name

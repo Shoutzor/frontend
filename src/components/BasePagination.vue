@@ -5,7 +5,8 @@
         <base-pagination-controls 
             v-model="currentPage"
             :total-pages="totalPages"
-            :on-navigate="onNavigate">
+            :on-navigate="onNavigate"
+            class="mt-2">
         </base-pagination-controls>
     </div>
 </template>
