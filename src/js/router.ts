@@ -10,6 +10,7 @@ import Search from "@js/views/main/search.vue";
 
 import AdminDashboard from "@js/views/admin/dashboard.vue";
 import AdminUserList from "@js/views/admin/user/list.vue";
+import AdminUserEdit from "@js/views/admin/user/edit.vue";
 import AdminRoleList from "@js/views/admin/role/list.vue";
 import AdminRoleCreate from "@js/views/admin/role/create.vue";
 import AdminRoleEdit from "@js/views/admin/role/edit.vue";
@@ -101,31 +102,42 @@ const routes = [
                         requiresAuth: true
                     }
                 }, {
-                    name: 'admin-users',
+                    name: 'admin-user',
                     path: 'users',
                     redirect: {
-                        name: 'admin-users-list'
+                        name: 'admin-user-list'
                     },
                     children: [
                         {
-                            name: 'admin-users-list',
+                            name: 'admin-user-list',
                             path: 'list',
                             component: AdminUserList,
                             meta: {
                                 requiresPermission: "admin.user.list",
                                 requiresAuth: true
                             }
+                        }, {
+                            name: 'admin-user-edit',
+                            path: 'edit/:userId',
+                            component: AdminUserEdit,
+                            props: ({params} : { params : { userId: String } }) => ({
+                                userId: params.userId || null
+                            }),
+                            meta: {
+                                requiresPermission: "admin.user.edit",
+                                requiresAuth: true
+                            }
                         }
                     ]
                 }, {
-                    name: 'admin-roles',
+                    name: 'admin-role',
                     path: 'roles',
                     redirect: {
-                        name: 'admin-roles-list'
+                        name: 'admin-role-list'
                     },
                     children: [
                         {
-                            name: 'admin-roles-list',
+                            name: 'admin-role-list',
                             path: 'list',
                             component: AdminRoleList,
                             meta: {
@@ -133,7 +145,7 @@ const routes = [
                                 requiresAuth: true
                             }
                         }, {
-                            name: 'admin-roles-create',
+                            name: 'admin-role-create',
                             path: 'create',
                             component: AdminRoleCreate,
                             meta: {
@@ -141,7 +153,7 @@ const routes = [
                                 requiresAuth: true
                             }
                         }, {
-                            name: 'admin-roles-edit',
+                            name: 'admin-role-edit',
                             path: 'edit/:roleId',
                             component: AdminRoleEdit,
                             props: ({params} : { params : { roleId: Number } }) => ({

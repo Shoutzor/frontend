@@ -14,6 +14,8 @@ import { RequestManagerPlugin } from "@js/plugins/RequestManager.js";
 import { MediaPlayerPlugin } from "@js/plugins/MediaPlayer.js";
 import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
 import {UploadManagerPlugin} from "@js/plugins/UploadManager.js";
+import { DocumentNode } from 'graphql/language/ast';
+import { getOperationName } from "@apollo/client/utilities";
 
 // Predefine instances
 let emitter;
@@ -123,6 +125,21 @@ fetch('/config.json')
                 secs = (s < 10) ? "0" + s : "" + s;
 
                 return hrs + mins + ':' + secs;
+            },
+
+            /**
+             * Helper function as workaround for @vue/apollo using an outdated
+             * version of @apollo/client; therefor not accepting a DocumentNode
+             * as `refetchQueries` parameter in `useMutation`.
+             * This helper function gets the query name from the DocumentNode.
+             * Once https://github.com/vuejs/apollo/issues/1427 is solved
+             * this helper function is no longer needed.
+             * 
+             * @param query a gql DocumentNode object
+             * @returns the query name
+             */
+            getGqlQueryName(query: DocumentNode) {
+                return getOperationName(query);
             }
         }
     });

@@ -5,7 +5,7 @@
 
             <router-link
                 v-if="can('admin.role.create')"
-                :to="{ name: 'admin-roles-create' }"
+                :to="{ name: 'admin-role-create' }"
                 class="btn btn-outline-primary text-decoration-none">
                 Create Role
             </router-link>
@@ -39,7 +39,7 @@
                                 <div class="hstack gap-2">
                                     <router-link
                                         v-if="can('admin.role.edit')"
-                                        :to="{ name: 'admin-roles-edit', params: { roleId: role.id } }"
+                                        :to="{ name: 'admin-role-edit', params: { roleId: role.id } }"
                                         class="btn btn-outline-primary text-decoration-none">
                                         Edit
                                     </router-link>
@@ -70,7 +70,7 @@ import BaseTable from "@components/BaseTable.vue";
 import BaseButton from "@components/BaseButton.vue";
 
 export default {
-    name: "admin-roles",
+    name: "admin-role-list",
     components: {
         BaseButton,
         BaseTable,
@@ -108,7 +108,7 @@ export default {
                     id: roleId,
                 },
                 refetchQueries: [
-                    'list_roles_query'
+                    this.getGqlQueryName(LIST_ROLES_QUERY)
                 ]
             });
 

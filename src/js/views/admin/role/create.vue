@@ -63,7 +63,7 @@ import BaseSpinner from "@components/BaseSpinner.vue";
 import PermissionList from "@components/PermissionList.vue";
 
 export default {
-    name: "admin-roles",
+    name: "admin-role-create",
     components: {
         BaseButton,
         BaseSpinner,

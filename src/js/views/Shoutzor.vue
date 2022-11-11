@@ -95,11 +95,11 @@ export default {
                             icon: "b-icon-graph-up"
                         }, {
                             name: "Users",
-                            route: "admin-users",
+                            route: "admin-user",
                             icon: "b-icon-people-fill"
                         }, {
                             name: "Roles",
-                            route: "admin-roles",
+                            route: "admin-role",
                             icon: "b-icon-person-check-fill"
                         }, {
                             name: "Settings",

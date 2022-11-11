@@ -1,4 +1,24 @@
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
+
+export const GET_USER_QUERY = gql`
+    query get_user_query($id: ID) {
+        user(id: $id) {
+            id
+            username
+            email_verified_at
+            approved
+            blocked
+            permissions {
+                id
+                name
+                description
+            }
+            roles {
+                id
+                name
+            }
+        }
+    }`;
 
 export const LIST_USERS_QUERY = gql`
     query list_users_query($page: Int, $limit: Int) {

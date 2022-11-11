@@ -41,13 +41,18 @@
                                 {{ user.username }}
                             </td>
                             <td>
-                                <role-list
-                                    :roles="user.roles"
+                                <name-list
+                                    :names="user.roles.map(r => r.name)"
                                     emptyMessage="No roles assigned" />
                             </td>
                             <td>
                                 <div class="hstack gap-2">
-                                    <base-button class="btn-outline-primary">Edit</base-button>
+                                    <router-link
+                                        v-if="can('admin.user.edit')"
+                                        :to="{ name: 'admin-user-edit', params: { userId: user.id } }"
+                                        class="btn btn-outline-primary text-decoration-none">
+                                        Edit
+                                    </router-link>
                                     <base-button 
                                         v-if="user_self.id !== user.id && can('admin.user.delete')"
                                         class="btn-outline-danger"
@@ -75,17 +80,17 @@ import BaseButton from "@components/BaseButton.vue";
 import BaseAvatar from "@components/BaseAvatar.vue";
 import BaseTable from "@components/BaseTable.vue";
 import GraphqlPagination from "@components/GraphqlPagination.vue";
-import RoleList from "@components/RoleList.vue";
+import NameList from "@components/NameList.vue";
 
 export default {
-    name: "admin-users",
+    name: "admin-user-list",
     components: {
         BIconXCircle,
         BIconCheckCircle,
         BIconQuestionCircle,
         BaseAvatar,
         BaseButton,
-        RoleList,
+        NameList,
         BaseTable,
         GraphqlPagination
     },
@@ -123,7 +128,7 @@ export default {
                     id: userId,
                 },
                 refetchQueries: [
-                    'list_users_query'
+                    this.getGqlQueryName(LIST_USERS_QUERY)
                 ]
             });
 

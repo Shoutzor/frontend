@@ -1,7 +1,7 @@
 <template>
     <div class="row row-cards">
         <div v-if="isLoading" class="col-sm-12">
-            <p>Loading role information</p>
+            <p>Loading user information</p>
             <div class="spinner-border" role="status"></div>
         </div>
         <div v-else-if="error">
@@ -9,32 +9,65 @@
             <base-button @click="getData" class="btn-primary">Retry</base-button>
         </div>
         <div v-else class="col-sm-12">
-            <h1 class="mb-4">Edit Role: {{ role.name }}</h1>
+            <h1 class="mb-4">Edit User: {{ user.name }}</h1>
 
             <div class="form-group mb-3">
-                <label class="form-label">Name</label>
+                <label class="form-label">Username</label>
                 <div>
-                    <input :disabled="role.protected"
-                        v-model="role.name"
+                    <input
+                        v-model="user.username"
                         autocomplete="off"
                         class="form-control"
-                        placeholder="Role name" type="text" />
+                        placeholder="Username" type="text" />
                 </div>
             </div>
+
             <div class="form-group mb-3">
-                <label class="form-label">Description</label>
+                <label class="form-label">Email</label>
                 <div>
-                    <textarea 
-                        v-model="role.description"
-                        :disabled="role.protected"
-                        class="form-control"></textarea>
-                    <small class="form-hint">
-                        A description for the role, used for administrative purposes only.
-                    </small>
+                    <input
+                        v-model="user.email"
+                        autocomplete="off"
+                        class="form-control"
+                        placeholder="Email" type="text" />
+                </div>
+            </div>
+
+            <formitem-checkbox
+                :disabled="true"
+                :checked="!!user.email_verified_at"
+                id="email_verified"
+                name="email_verified"
+                description="Shows if the user has verified their email"
+                />
+
+            <formitem-checkbox 
+                :isSwitch="true"
+                :checked="user.approved"
+                id="approved"
+                name="approved"
+                description="If the user is approved"
+                />
+
+            <formitem-checkbox 
+                :isSwitch="true"
+                :checked="user.blocked"
+                id="blocked"
+                name="blocked"
+                description="If the user is blocked"
+                />
+
+            <div class="card">
+                <div class="card-header">User Roles</div>
+                <div class="card-body">
+                    <role-list
+                        :hasRoles="roles"
+                        :roles="allRoles"
+                        @change="roleChanged" />
                 </div>
             </div>
             <div class="card">
-                <div class="card-header">Permissions</div>
+                <div class="card-header">User-specific Permissions</div>
                 <div class="card-body">
                     <permission-list
                         :hasPermissions="permissions"
@@ -58,21 +91,26 @@
 <script>
 import { useMutation } from "@vue/apollo-composable";
 import { LIST_PERMISSIONS_QUERY } from "@graphql/permissions.js";
-import { GET_ROLE_QUERY, UPDATE_ROLE_MUTATION } from "@graphql/roles.js";
+import { GET_USER_QUERY } from "@graphql/users.js";
+import { LIST_ROLES_QUERY, UPDATE_ROLE_MUTATION } from "@graphql/roles.js";
 import BaseButton from "@components/BaseButton.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
+import FormitemCheckbox from "@components/FormitemCheckbox.vue";
 import PermissionList from "@components/PermissionList.vue";
+import RoleList from "@components/RoleList.vue";
 
 export default {
-    name: "admin-role-edit",
+    name: "admin-user-edit",
     components: {
         BaseButton,
         BaseSpinner,
-        PermissionList
+        FormitemCheckbox,
+        PermissionList,
+        RoleList
     },
     props: {
-        roleId: {
-            type: Number,
+        userId: {
+            type: String,
             default: null
         }
     },
@@ -83,7 +121,9 @@ export default {
             role: null,
             saving: false,
             permissions: [],
-            allPermissions: []
+            allPermissions: [],
+            roles: [],
+            allRoles: []
         }
     },
     mounted() {
@@ -106,24 +146,56 @@ export default {
                 this.bootstrapControl.showToast("danger", "Could not load the permissions, error:" + error);
             });
 
-            // Next fetch the role data
+            // Next fetch all the roles
             await this.apollo.query({
-                query: GET_ROLE_QUERY,
-                variables: {
-                    id: this.roleId
-                }
+                query: LIST_ROLES_QUERY
             })
             .then((result) => {
-                this.role = result.data.role;
-                this.permissions = result.data.role.permissions;
+                this.allRoles = result.data.roles.data;
             })
             .catch((error) => {
                 this.error = true;
-                this.bootstrapControl.showToast("danger", "Could not load the role, error:" + error);
+                this.bootstrapControl.showToast("danger", "Could not load the roles, error:" + error);
+            });
+
+            // Finally fetch the user data
+            await this.apollo.query({
+                query: GET_USER_QUERY,
+                variables: {
+                    id: this.userId
+                }
+            })
+            .then((result) => {
+                this.user = result.data.user;
+                this.permissions = result.data.user.permissions;
+                this.roles = result.data.user.roles;
+            })
+            .catch((error) => {
+                this.error = true;
+                this.bootstrapControl.showToast("danger", "Could not load the user, error:" + error);
             })
             .finally(() => {
                 this.isLoading = false;
             });
+        },
+        /**
+         * Triggered when a permission from the list has been (de)activated
+         * updates the internal state of permissions for this role, these
+         * changes are not persisted yet.
+         * @param {*} e 
+         */
+         async permissionChanged(e) {
+            const permission = e.target.dataset.name;
+            const state = e.target.checked;
+
+            // Permission was enabled
+            if(state) {
+                this.addPermission(permission);
+            }
+            // Permission was disabled
+            else {
+                this.removePermission(permission);
+            }
         },
         /**
          * Triggered when a permission from the list has been (de)activated
@@ -183,7 +255,7 @@ export default {
                 this.permissions = this.permissions.filter(i => i.name !== permissionName);
             }
             else {
-                console.error("Role doesn't have the permission " + permissionName);
+                console.error("User doesn't have the permission " + permissionName);
             }
         },
         /**
@@ -194,14 +266,14 @@ export default {
 
             // Build the variables to pass to the GraphQL mutation
             let variables = {
-                id: this.role.id,
+                id: this.user.id,
                 permissions: this.permissions.map(p => p.id)
             };
 
             // Only update the name & description if a role is not protected
-            if(!this.role.protected) {
-                variables['name'] = this.role.name;
-                variables['description'] = this.role.description;
+            if(!this.user.protected) {
+                variables['name'] = this.user.name;
+                variables['description'] = this.user.description;
             }
 
             const { mutate: updateRoleMutation } = useMutation(UPDATE_ROLE_MUTATION, {

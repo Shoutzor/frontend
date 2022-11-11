@@ -1,30 +1,40 @@
 <template>
-    <div class="roles">
-        <template v-if="roles.length === 0">{{ emptyMessage }}</template>
-        <template v-else>
-            <span v-for="(role, index) in roles"
-                  :key="role.id"
-            >
-                <template v-if="index != 0">, </template>
-                {{ role.name }}
-            </span>
-        </template>
-    </div>
+    <form-checkbox-list
+        :items="items"
+        :asSwitches="false" />
 </template>
 
 <script>
+import FormCheckboxList from "@components/FormCheckboxList.vue";
+
 export default {
-    name: 'role-list',
+    components: {
+        FormCheckboxList
+    },
     props: {
         roles: {
             type: Array,
-            default: [],
-            required: true
+            required: true,
+            default: []
         },
-        emptyMessage: {
-            type: String,
-            default: '',
-            required: false
+        hasRoles: {
+            type: Array,
+            required: true,
+            default: []
+        }
+    },
+    computed: {
+        activeRoles() {
+            return this.hasRoles.map(r => r.name);
+        },
+        items() {
+            return this.roles.map(r => {
+                return {
+                    ...r,
+                    id: `role_${r.name}`,
+                    checked: this.activeRoles.indexOf(r.name) !== -1
+                }
+            });
         }
     }
 }

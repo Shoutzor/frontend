@@ -1,24 +1,16 @@
 <template>
-    <div class="list list-row">
-        <template v-if="permissions.length > 0">
-            <permission-item
-                v-for="(permission, index) in permissions"
-                :key="permission.name"
-                :hasPermission="activePermissions.indexOf(permission.name) !== -1"
-                :permission="permission"
-                @change="onChange" />
-        </template>
-    </div>
+    <form-checkbox-list
+        :items="items"
+        :asSwitches="true" />
 </template>
 
 <script>
-import PermissionItem from "@components/PermissionItem.vue";
+import FormCheckboxList from "@components/FormCheckboxList.vue";
 
 export default {
     components: {
-        PermissionItem
+        FormCheckboxList
     },
-    emits: ['change'],
     props: {
         permissions: {
             type: Array,
@@ -32,13 +24,15 @@ export default {
     computed: {
         activePermissions() {
             return this.hasPermissions.map(p => p.name);
-        }
-    },
-    setup(props, {emit}) {
-        return {
-            async onChange(e) {
-                emit('change', e);
-            }
+        },
+        items() {
+            return this.permissions.map(p => {
+                return {
+                    ...p,
+                    id: `permission_${p.name}`,
+                    checked: this.activePermissions.indexOf(p.name) !== -1
+                }
+            });
         }
     }
 }

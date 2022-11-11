@@ -1,6 +1,13 @@
 <template>
     <div :class="classes">
-        <input v-model="checked" class="form-check-input" type="checkbox" :id="id" :role="isSwitch ? 'switch' : ''">
+        <input 
+            v-model="checked" 
+            :disabled="disabled"
+            :id="id" :role="isSwitch ? 'switch' : ''"
+            :data-name="name"
+            class="form-check-input" 
+            type="checkbox" 
+            @change="onChange" />
         <div class="text-truncate">
             <label :for="id">
                 <div class="text-body d-block">{{ name }}</div>
@@ -15,6 +22,7 @@ import { reactive, computed } from "vue";
 
 export default {
     name: 'formitem-checkbox',
+    emits: ['change'],
     props: {
         id: {
             type: String,
@@ -38,9 +46,14 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        },
+        disabled: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
-    setup(props) {
+    setup(props, {emit}) {
         props = reactive(props);
 
         return {
@@ -48,7 +61,10 @@ export default {
                 'list-item': true,
                 'form-check': true,
                 'form-switch': props.isSwitch
-            }))
+            })),
+            async onChange(e) {
+                emit('change', e);
+            }
         }
     }
 }
