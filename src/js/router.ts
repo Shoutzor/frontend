@@ -189,6 +189,8 @@ export default function (authManager : AuthenticationManager) {
     /**
      * Checks if the user is authorized to access the route
      * if not, the user will be redirected back to the root of the app
+     * Checks if the targeted path is '/' in order to prevent infinite
+     * loops.
      */
     router.beforeEach(async (to, from) => {
         if(!authManager.isInitialized) {
@@ -200,12 +202,12 @@ export default function (authManager : AuthenticationManager) {
 
             // If requiresPermission is set, check if the user has the required permission.
             if ("requiresPermission" in m && authManager.can(m.requiresPermission) === false) {
-                return '/';
+                return (to.fullPath === '/') ? false : '/';
             }
 
             // If requiresAuth is set, check if the user is (un)authenticated (permission-based is preferred)
             if ("requiresAuth" in m && m.requiresAuth === true && authManager.isAuthenticated === !m.requiresAuth) {
-                return '/';
+                return (to.fullPath === '/') ? false : '/';
             }
         }
 
