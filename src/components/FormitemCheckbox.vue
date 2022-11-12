@@ -1,7 +1,7 @@
 <template>
     <div :class="classes">
         <input 
-            v-model="checked" 
+            v-model="isChecked" 
             :disabled="disabled"
             :id="id" :role="isSwitch ? 'switch' : ''"
             :data-name="name"
@@ -22,7 +22,7 @@ import { reactive, computed } from "vue";
 
 export default {
     name: 'formitem-checkbox',
-    emits: ['change'],
+    emits: ['change', 'update:checked'],
     props: {
         id: {
             type: String,
@@ -51,6 +51,16 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        }
+    },
+    computed: {
+        isChecked: {
+            get() {
+                return this.checked;
+            },
+            set(value) {
+                this.$emit('update:checked', value);
+            }
         }
     },
     setup(props, {emit}) {

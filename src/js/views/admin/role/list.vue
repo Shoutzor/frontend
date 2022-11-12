@@ -103,7 +103,7 @@ export default {
             modalProps.loading = true;
 
             const { mutate: deleteRoleMutation } = useMutation(DELETE_ROLE_MUTATION, {
-                fetchPolicy: 'no-cache',
+                fetchPolicy: 'network-only',
                 variables: {
                     id: roleId,
                 },

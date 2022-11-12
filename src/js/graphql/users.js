@@ -4,6 +4,7 @@ export const GET_USER_QUERY = gql`
     query get_user_query($id: ID) {
         user(id: $id) {
             id
+            email
             username
             email_verified_at
             approved
@@ -40,6 +41,33 @@ export const LIST_USERS_QUERY = gql`
                 }
                 is_admin
             }
+        }
+    }`;
+
+export const UPDATE_USER_MUTATION = gql`
+    mutation update_user_mutation(
+        $id: ID!,
+        $username: String,
+        $email: String,
+        $approved: Boolean,
+        $blocked: Boolean,
+        $permissions: [ID!],
+        $roles: [ID!]
+    ) {
+        updateUser(
+            id: $id
+            username: $username
+            email: $email
+            approved: $approved
+            blocked: $blocked
+            permissions: {
+                sync: $permissions
+            },
+            roles: {
+                sync: $roles
+            }
+        ){
+            id
         }
     }`;
 

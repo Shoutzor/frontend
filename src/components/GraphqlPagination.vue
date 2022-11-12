@@ -36,6 +36,11 @@ export default {
             type: Object,
             required: true
         },
+        cachePolicy: {
+            type: String,
+            required: false,
+            default: 'cache-and-network'
+        },
         limit: {
             type: Number,
             required: false,
@@ -115,7 +120,7 @@ export default {
                     where: this.where
                 }
             }, {
-                fetchPolicy: "no-cache"
+                fetchPolicy: this.cachePolicy
             });
 
             this.isLoading = loading;

@@ -36,9 +36,8 @@
                 <div class="card-header">Permissions</div>
                 <div class="card-body">
                     <permission-list
-                        :hasPermissions="permissions"
-                        :permissions="allPermissions"
-                        @change="permissionChanged" />
+                        v-model:hasPermissions="permissions"
+                        :permissions="allPermissions" />
                 </div>
             </div>
             <div class="form-footer mt-2">
@@ -110,67 +109,6 @@ export default {
             });
         },
         /**
-         * Triggered when a permission from the list has been (de)activated
-         * updates the internal state of permissions for this role, these
-         * changes are not persisted yet.
-         * @param {*} e 
-         */
-        async permissionChanged(e) {
-            const permission = e.target.parentElement.dataset.permission;
-            const state = e.target.checked;
-
-            // Permission was enabled
-            if(state) {
-                this.addPermission(permission);
-            }
-            // Permission was disabled
-            else {
-                this.removePermission(permission);
-            }
-        },
-        /**
-         * Gets the permission object for the given name
-         * @param {*} permissionName 
-         */
-        getPermission(permissionName) {
-            return this.allPermissions.find(p => p.name === permissionName);
-        },
-        /**
-         * Checks if the role has the given permission
-         * @param {*} permissionName 
-         * @return boolean
-         */
-        hasPermission(permissionName) {
-            return this.permissions.find(p => p.name === permissionName) !== undefined;
-        },
-        /**
-         * Adds a permission to the current role
-         * @param {*} permissionName 
-         */
-        addPermission(permissionName) {
-            if(!this.hasPermission(permissionName)) {
-                const p = this.getPermission(permissionName);
-                if(p) {
-                    this.permissions = [...this.permissions, this.getPermission(permissionName)];
-                }
-                else {
-                    console.error("No permission found for " + permissionName);
-                }
-            }
-        },
-        /**
-         * Removes a permission from the current role
-         * @param {*} permissionName 
-         */
-        removePermission(permissionName) {
-            if(this.hasPermission(permissionName)) {
-                this.permissions = this.permissions.filter(i => i.name !== permissionName);
-            }
-            else {
-                console.error("Role doesn't have the permission " + permissionName);
-            }
-        },
-        /**
          * Persists the changes (if any) for the current role
          */
         async createRole() {
@@ -201,10 +139,10 @@ export default {
             createRoleMutation()
             .then(() => {
                 this.bootstrapControl.showToast("success", "Role created");
-                this.$router.push({ name:'admin-roles-list' });
+                this.$router.push({ name:'admin-role-list' });
             })
             .catch(error => {
-                this.bootstrapControl.showToast("danger", "Failed to create the role, error:" + error);
+                this.bootstrapControl.showToast("danger", `Failed to create the role, error: ${error}`);
                 this.saving = false;
             });
         }

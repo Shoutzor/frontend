@@ -68,7 +68,7 @@ fetch('/config.json')
         connectToDevTools: config.APP_DEBUG,
         defaultOptions: {
             query: {
-                fetchPolicy: 'cache-first',
+                fetchPolicy: 'network-only',
             },
         }
     });

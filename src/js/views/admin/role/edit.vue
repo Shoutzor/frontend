@@ -9,13 +9,13 @@
             <base-button @click="getData" class="btn-primary">Retry</base-button>
         </div>
         <div v-else class="col-sm-12">
-            <h1 class="mb-4">Edit Role: {{ role.name }}</h1>
+            <h1 class="mb-4">Edit Role: {{ name }}</h1>
 
             <div class="form-group mb-3">
                 <label class="form-label">Name</label>
                 <div>
-                    <input :disabled="role.protected"
-                        v-model="role.name"
+                    <input :disabled="protected"
+                        v-model="name"
                         autocomplete="off"
                         class="form-control"
                         placeholder="Role name" type="text" />
@@ -25,8 +25,8 @@
                 <label class="form-label">Description</label>
                 <div>
                     <textarea 
-                        v-model="role.description"
-                        :disabled="role.protected"
+                        v-model="description"
+                        :disabled="protected"
                         class="form-control"></textarea>
                     <small class="form-hint">
                         A description for the role, used for administrative purposes only.
@@ -37,9 +37,8 @@
                 <div class="card-header">Permissions</div>
                 <div class="card-body">
                     <permission-list
-                        :hasPermissions="permissions"
-                        :permissions="allPermissions"
-                        @change="permissionChanged" />
+                        v-model:hasPermissions="permissions"
+                        :permissions="allPermissions" />
                 </div>
             </div>
             <div class="form-footer mt-2">
@@ -80,8 +79,10 @@ export default {
         return {
             isLoading: true,
             error: false,
-            role: null,
             saving: false,
+            protected: false,
+            name: '',
+            description: '',
             permissions: [],
             allPermissions: []
         }
@@ -96,6 +97,8 @@ export default {
 
             // First fetch all the permissions
             await this.apollo.query({
+                fetchPolicy: 'network-only',
+                nextFetchPolicy: 'cache-first',
                 query: LIST_PERMISSIONS_QUERY
             })
             .then((result) => {
@@ -108,14 +111,18 @@ export default {
 
             // Next fetch the role data
             await this.apollo.query({
+                fetchPolicy: 'network-only',
                 query: GET_ROLE_QUERY,
                 variables: {
                     id: this.roleId
                 }
             })
             .then((result) => {
-                this.role = result.data.role;
-                this.permissions = result.data.role.permissions;
+                const role = result.data.role;
+                this.protected = role.protected;
+                this.name = role.name;
+                this.description = role.description;
+                this.permissions = role.permissions;
             })
             .catch((error) => {
                 this.error = true;
@@ -126,67 +133,6 @@ export default {
             });
         },
         /**
-         * Triggered when a permission from the list has been (de)activated
-         * updates the internal state of permissions for this role, these
-         * changes are not persisted yet.
-         * @param {*} e 
-         */
-        async permissionChanged(e) {
-            const permission = e.target.dataset.name;
-            const state = e.target.checked;
-
-            // Permission was enabled
-            if(state) {
-                this.addPermission(permission);
-            }
-            // Permission was disabled
-            else {
-                this.removePermission(permission);
-            }
-        },
-        /**
-         * Gets the permission object for the given name
-         * @param {*} permissionName 
-         */
-        getPermission(permissionName) {
-            return this.allPermissions.find(p => p.name === permissionName);
-        },
-        /**
-         * Checks if the role has the given permission
-         * @param {*} permissionName 
-         * @return boolean
-         */
-        hasPermission(permissionName) {
-            return this.permissions.find(p => p.name === permissionName) !== undefined;
-        },
-        /**
-         * Adds a permission to the current role
-         * @param {*} permissionName 
-         */
-        addPermission(permissionName) {
-            if(!this.hasPermission(permissionName)) {
-                const p = this.getPermission(permissionName);
-                if(p) {
-                    this.permissions = [...this.permissions, this.getPermission(permissionName)];
-                }
-                else {
-                    console.error("No permission found for " + permissionName);
-                }
-            }
-        },
-        /**
-         * Removes a permission from the current role
-         * @param {*} permissionName 
-         */
-        removePermission(permissionName) {
-            if(this.hasPermission(permissionName)) {
-                this.permissions = this.permissions.filter(i => i.name !== permissionName);
-            }
-            else {
-                console.error("Role doesn't have the permission " + permissionName);
-            }
-        },
-        /**
          * Persists the changes (if any) for the current role
          */
         async saveData() {
@@ -194,29 +140,28 @@ export default {
 
             // Build the variables to pass to the GraphQL mutation
             let variables = {
-                id: this.role.id,
+                id: this.roleId,
                 permissions: this.permissions.map(p => p.id)
             };
 
             // Only update the name & description if a role is not protected
-            if(!this.role.protected) {
-                variables['name'] = this.role.name;
-                variables['description'] = this.role.description;
+            if(!this.protected) {
+                variables['name'] = this.name;
+                variables['description'] = this.description;
             }
 
             const { mutate: updateRoleMutation } = useMutation(UPDATE_ROLE_MUTATION, {
-                fetchPolicy: 'no-cache',
+                fetchPolicy: 'network-only',
                 variables
             });
 
             updateRoleMutation()
             .then(result => {
-                this.bootstrapControl.showToast("success", "Role saved");
+                this.bootstrapControl.showToast("success", `Role "${this.name}" saved`);
+                this.$router.push({ name:'admin-role-list' });
             })
             .catch(error => {
-                this.bootstrapControl.showToast("danger", "Failed to save the role, error:" + error);
-            })
-            .finally(() => {
+                this.bootstrapControl.showToast("danger", `Failed to save the role "${this.name}", error: ${error}`);
                 this.saving = false;
             });
         }

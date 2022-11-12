@@ -1,6 +1,6 @@
 <template>
     <form-checkbox-list
-        :items="items"
+        v-model:items="checklistRoles"
         :asSwitches="false" />
 </template>
 
@@ -11,6 +11,7 @@ export default {
     components: {
         FormCheckboxList
     },
+    emits: ['update:hasRoles'],
     props: {
         roles: {
             type: Array,
@@ -23,18 +24,27 @@ export default {
             default: []
         }
     },
-    computed: {
-        activeRoles() {
-            return this.hasRoles.map(r => r.name);
-        },
-        items() {
-            return this.roles.map(r => {
+    data() {
+        return {
+            checklistRoles: this.roles.map(r => {
                 return {
                     ...r,
-                    id: `role_${r.name}`,
-                    checked: this.activeRoles.indexOf(r.name) !== -1
+                    id: `permission_${r.name}`,
+                    checked: this.hasRoles.map(r => r.name).indexOf(r.name) !== -1
                 }
-            });
+            })
+        }
+    },
+    watch: {
+        checklistRoles: {
+            handler(newValue) {
+                const newRoles = newValue.filter(r => r.checked).map(r => r.name);
+
+                this.$emit('update:hasRoles', this.roles.filter(r => {
+                    return newRoles.indexOf(r.name) > -1;
+                }));
+            },
+            deep: true
         }
     }
 }

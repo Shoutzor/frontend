@@ -7,7 +7,10 @@
         <main id="main-content" class="d-flex flex-column flex-grow-1">
             <perfect-scrollbar ref="scroll">
                 <div class="container">
-                    <router-view @vnodeMounted="updateScrollbar" @vnodeUpdated="updateScrollbar" />
+                    <router-view 
+                        :key="$route.fullPath"
+                        @vnodeMounted="updateScrollbar" 
+                        @vnodeUpdated="updateScrollbar" />
                 </div>
             </perfect-scrollbar>
         </main>
@@ -115,7 +118,9 @@ export default {
         // Warning: IDE's might say this is unused, but it's not. DO NOT REMOVE.
         // Will bring the page back to the top whenever the route is changed
         $route() {
-            this.$refs.scroll.$el.scrollTop = 0;
+            this.$nextTick(() => {
+                this.$refs.scroll.$el.scrollTop = 0;
+            });
         }
     },
     methods: {

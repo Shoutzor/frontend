@@ -1,16 +1,14 @@
 <template>
     <div class="list list-row">
-        <template v-if="items.length > 0">
-            <formitem-checkbox 
-                v-for="item in items"
-                :key="item.id"
-                :id="item.id"
-                :name="item.name"
-                :description="item.description"
-                :isSwitch="asSwitches"
-                :checked="item.checked"
-                />
-        </template>
+        <formitem-checkbox 
+            v-for="item in items"
+            :key="item.id"
+            :id="item.id"
+            :name="item.name"
+            :description="item.description"
+            :isSwitch="asSwitches"
+            v-model:checked="item.checked"
+            />
     </div>
 </template>
 

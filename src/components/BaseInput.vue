@@ -15,7 +15,12 @@ import {computed, reactive} from "vue";
 
 export default {
     name: 'base-input',
-
+    emits: ['update:modelValue'],
+    data() {
+        return {
+            value: this.modelValue
+        }
+    },
     props: {
         type: {
             type: String,
@@ -29,7 +34,7 @@ export default {
             type: String,
             required: false
         },
-        value: {
+        modelValue: {
             type: String,
             required: false
         },
@@ -55,10 +60,7 @@ export default {
             default: false
         }
     },
-
-    emits: ['input'],
-
-    setup(props, {emit}) {
+    setup(props) {
         props = reactive(props);
 
         return {
@@ -67,10 +69,12 @@ export default {
                 'form-control-sm': props.size === 'small',
                 'form-control-lg': props.size === 'large',
                 'is-invalid': props.hasError
-            })),
-            handleInput() {
-                emit('input', props.value);
-            }
+            }))
+        }
+    },
+    watch: {
+        value(newValue) {
+            this.$emit('update:modelValue', newValue);
         }
     }
 }
