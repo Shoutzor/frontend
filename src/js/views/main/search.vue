@@ -89,7 +89,7 @@ import MediaIcon from "@components/MediaIcon.vue";
 import RequestButton from "@components/RequestButton.vue";
 
 export default {
-    name: "dashboard-view",
+    name: "search-view",
     components: {
         RequestButton,
         ArtistList,

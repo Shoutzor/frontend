@@ -11,7 +11,7 @@
 import HistoryTable from "@components/HistoryTable.vue";
 
 export default {
-    name: "dashboard-view",
+    name: "history-view",
     components: {
         HistoryTable
     }

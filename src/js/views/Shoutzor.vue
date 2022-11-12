@@ -16,20 +16,13 @@
         </main>
     </div>
 
-    <div class="position-relative bottom-0 order-3">
-        <the-modalmanager />
-        <the-toastmanager />
-    </div>
-
-    <the-mediaplayer id="media-player" :volume="100" :playerStatus="'stopped'"/>
+    <the-mediaplayer id="media-player" :volume="100" :playerStatus="'stopped'" class="order-4" />
 </template>
 
 <script>
 import TheHeader from '@components/TheHeader.vue';
 import TheMenu from '@components/TheMenu.vue';
 import TheMediaplayer from '@components/TheMediaplayer.vue';
-import TheToastmanager from "@components/TheToastmanager.vue";
-import TheModalmanager from "@components/TheModalmanager.vue";
 import PerfectScrollbar from "@components/PerfectScrollbar.vue";
 
 export default {
@@ -37,8 +30,6 @@ export default {
     components: {
         TheHeader,
         TheMenu,
-        TheModalmanager,
-        TheToastmanager,
         TheMediaplayer,
         PerfectScrollbar
     },

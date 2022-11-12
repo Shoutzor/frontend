@@ -40,6 +40,21 @@ a {
     font-size: 2rem;
 }
 
+/**
+ * Loading-screen styling
+ * Also used by the LoadScreen VUE component
+ */
+.load-screen {
+    opacity: 1 !important;
+    z-index: 99999 !important;
+
+    svg {
+        max-height: 6rem;
+        width: auto;
+        fill: $white;
+    }
+}
+
 /*
  * Main Theme Structure
  */

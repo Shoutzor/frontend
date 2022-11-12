@@ -1,6 +1,6 @@
 <template>
     <div class="load-screen text-center">
-        <ShoutzorLogo alt="Shoutz0r logo" />
+        <shoutzor-logo alt="Shoutz0r logo" class="logo" />
 
         <div class="center-block">
             <BaseSpinner />
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import ShoutzorLogo from "@static/images/shoutzor-logo.svg?skipsvgo";
+import ShoutzorLogo from "@static/images/shoutzor-logo.svg?component";
 import BaseSpinner from "@components/BaseSpinner.vue";
 
 export default {
@@ -32,14 +32,7 @@ export default {
 </script>
 
 <style lang="scss">
-.load-screen {
-    opacity: 1 !important;
-    z-index: 99999 !important;
-
-    svg {
-        width: 430px;
-        height: 200px;
-        fill: $white;
-    }
-}
+/**
+ * Uses the same styling as defined in /assets/scss/custom-theme/_style.scss
+ */
 </style>

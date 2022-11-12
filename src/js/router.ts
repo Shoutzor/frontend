@@ -7,6 +7,7 @@ import Upload from "@js/views/main/upload.vue";
 import Artist from "@js/views/main/artist.vue";
 import Album from "@js/views/main/album.vue";
 import Search from "@js/views/main/search.vue";
+import Register from "@js/views/main/register.vue";
 
 import AdminDashboard from "@js/views/admin/dashboard.vue";
 import AdminUserList from "@js/views/admin/user/list.vue";
@@ -82,8 +83,7 @@ const routes = [
                 requiresPermission: "website.profile",
                 requiresAuth: true
             }
-        },
-        {
+        }, {
             name: 'admin',
             path: '/admin',
             redirect: {
@@ -186,6 +186,10 @@ export default function (authManager : AuthenticationManager) {
         routes 
     });
 
+    /**
+     * Checks if the user is authorized to access the route
+     * if not, the user will be redirected back to the root of the app
+     */
     router.beforeEach(async (to, from) => {
         if(!authManager.isInitialized) {
             await authManager.isInitializedPromise;
@@ -196,12 +200,12 @@ export default function (authManager : AuthenticationManager) {
 
             // If requiresPermission is set, check if the user has the required permission.
             if ("requiresPermission" in m && authManager.can(m.requiresPermission) === false) {
-                return false;
+                return '/';
             }
 
-            // If requiresAuth is set, check if the user is authenticated (permission-based is preferred)
-            if ("requiresAuth" in m && m.requiresAuth === true && authManager.isAuthenticated === false) {
-                return false;
+            // If requiresAuth is set, check if the user is (un)authenticated (permission-based is preferred)
+            if ("requiresAuth" in m && m.requiresAuth === true && authManager.isAuthenticated === !m.requiresAuth) {
+                return '/';
             }
         }
 
