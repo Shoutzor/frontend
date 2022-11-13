@@ -1,6 +1,6 @@
 import {reactive} from "vue";
-import {provideApolloClient, useMutation} from "@vue/apollo-composable";
-import {LASTPLAYED_MUTATION} from "@graphql/requests";
+import {provideApolloClient, useQuery} from "@vue/apollo-composable";
+import { LASTPLAYED_QUERY } from "@graphql/requests";
 import dashjs from 'dashjs';
 import {PlayerState} from "@models/PlayerState";
 
@@ -88,17 +88,13 @@ export class MediaPlayer {
     }
 
     #onLastPlayedUpdate() {
-        const { mutate: lastPlayedMutate } = useMutation(LASTPLAYED_MUTATION, {
-            fetchPolicy: 'no-cache'
+        const { onResult } = useQuery(LASTPLAYED_QUERY, {
+            fetchPolicy: 'cache-and-network'
         });
 
-        lastPlayedMutate()
-            .then(result => {
-                this.#updateLastPlayed(result.data.lastPlayed.request);
-            })
-            .catch(error => {
-                console.error("Failed to update Last Played Request", error);
-            });
+        onResult(result => {
+            this.#updateLastPlayed(result.data.requests.data[0]);
+        });
     }
 
     play() {

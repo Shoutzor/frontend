@@ -1,9 +1,13 @@
 import gql from 'graphql-tag';
 
-export const LASTPLAYED_MUTATION = gql`
-    mutation lastplayed_mutation {
-        lastPlayed {
-            request {
+export const LASTPLAYED_QUERY = gql`
+    query last_played {
+        requests(
+            where: { column: PLAYED_AT, operator: IS_NOT_NULL},
+            orderBy: { column: "played_at", order: DESC },
+            first: 1
+        ) {
+            data {
                 id
                 requested_by {
                     id
