@@ -13,7 +13,7 @@
                 <span class="page-link" @click.prevent="onNavigate(page)">{{ page }}</span>
             </li>
 
-            <li class="page-item active"><span class="page-link">{{ modelValue }}</span></li>
+            <li class="page-item active"><span class="page-link">{{ currentPage }}</span></li>
 
             <li class="page-item" v-for="page in showAfter">
                 <span class="page-link" @click.prevent="onNavigate(page)">{{ page }}</span>
@@ -36,7 +36,7 @@ import {computed, reactive} from "vue";
 export default {
     name: 'base-pagination-controls',
     props: {
-        modelValue: {
+        currentPage: {
             type: Number,
             required: true
         },
@@ -51,7 +51,8 @@ export default {
         },
         onNavigate: {
             type: Function,
-            required: true
+            required: true,
+            default: (page) => {}
         },
         showFirst: {
             type: Boolean,
@@ -106,17 +107,17 @@ export default {
     },
     computed: {
         hasPrev() {
-            return this.modelValue - 1 >= 1;
+            return this.currentPage - 1 >= 1;
         },
         hasNext() {
-            return this.modelValue + 1 <= this.totalPages;
+            return this.currentPage + 1 <= this.totalPages;
         },
         maxPagesToShow() {
             return this.maxPerSide * 2;
         },
         maxOnLeftSide() {
-            if(this.modelValue <= this.maxPerSide) {
-                return this.modelValue;
+            if(this.currentPage <= this.maxPerSide) {
+                return this.currentPage;
             }
 
             return this.maxOnRightSide >= this.maxPerSide
@@ -125,7 +126,7 @@ export default {
         },
         maxOnRightSide() {
             // Nothing to show on the right side when we're on the last page already
-            if(this.modelValue >= this.totalPages) {
+            if(this.currentPage >= this.totalPages) {
                 return 0;
             }
 
@@ -133,17 +134,17 @@ export default {
             let toShow = this.maxPerSide * 2;
 
             // If the left side is showing it's maximum amount
-            if(this.modelValue > this.maxPerSide) {
+            if(this.currentPage > this.maxPerSide) {
                 toShow = this.maxPerSide;
             }
             // Left side will be showing less than the maxPerSide
             else {
-                toShow -= this.modelValue - 1;
+                toShow -= this.currentPage - 1;
             }
 
             // Finally, do a check that we're not showing pages beyond the number of totalPages
-            if(toShow >= this.totalPages - this.modelValue) {
-                return this.totalPages - this.modelValue;
+            if(toShow >= this.totalPages - this.currentPage) {
+                return this.totalPages - this.currentPage;
             }
 
             return toShow;
@@ -151,7 +152,7 @@ export default {
         showBefore() {
             let res = [];
             for(let i = 1; i <= this.maxOnLeftSide; i++) {
-                let n = this.modelValue - i;
+                let n = this.currentPage - i;
                 // There is no page 0 or lower
                 if(n < 1) {
                     continue;
@@ -164,7 +165,7 @@ export default {
         showAfter() {
             let res = [];
             for(let i = 1; i <= this.maxOnRightSide; i++) {
-                res.push(i + this.modelValue);
+                res.push(i + this.currentPage);
             }
             return res;
         }
@@ -174,13 +175,13 @@ export default {
             if(!this.hasNext) {
                 return;
             }
-            this.onNavigate(this.modelValue + 1);
+            this.onNavigate(this.currentPage + 1);
         },
         onPrev() {
             if(!this.hasPrev) {
                 return;
             }
-            this.onNavigate(this.modelValue - 1);
+            this.onNavigate(this.currentPage - 1);
         }
     }
 }

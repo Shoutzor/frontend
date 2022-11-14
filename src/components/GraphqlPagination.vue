@@ -114,11 +114,9 @@ export default {
                 loading,
                 error
             } = useQuery(this.queryObj, {
-                variables: {
-                    page: this.currentPage,
-                    limit: this.limit,
-                    where: this.where
-                }
+                page: this.currentPage,
+                limit: this.limit,
+                where: this.where
             }, {
                 fetchPolicy: this.cachePolicy
             });

@@ -6,7 +6,8 @@
             <graphql-pagination
                 :queryObj="LIST_USERS_QUERY"
                 :limit="8"
-                v-slot="props">
+                v-slot="props"
+                ref="pagination">
                 <base-table
                     description="Lists all user accounts"
                     :hoverable="true">
@@ -21,7 +22,8 @@
                     <template #default>
                         <tr 
                             v-if="props.itemsOnPage.length > 0"
-                            v-for="user in props.itemsOnPage">
+                            v-for="user in props.itemsOnPage"
+                            :key="user.id">
                             <td class="min">
                                 <base-avatar v-if="user.blocked" type="danger">
                                     <b-icon-x-circle />
@@ -150,8 +152,6 @@ export default {
                     this.bootstrapControl.showToast("danger", "Unknown action requested");
                     return;
             }
-
-            
         },
         onApprove(user) {
             this.modalId = this.bootstrapControl.showModal({
@@ -199,15 +199,13 @@ export default {
 
             const { mutate: userMutation } = useMutation(gqlMutation, {
                 fetchPolicy: 'network-only',
-                variables: gqlVariables,
-                refetchQueries: [
-                    this.getGqlQueryName(LIST_USERS_QUERY)
-                ]
+                variables: gqlVariables
             });
 
             userMutation()
             .then(() => {
                 this.bootstrapControl.showToast("success", successMessage);
+                this.$refs.pagination.refresh();
             })
             .catch(error => {
                 this.bootstrapControl.showToast("danger", errorMessage + error);

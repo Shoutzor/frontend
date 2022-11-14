@@ -3,7 +3,7 @@
         <slot></slot>
 
         <base-pagination-controls 
-            v-model="currentPageIntermediate"
+            :current-page="currentPage"
             :total-pages="totalPages"
             :on-navigate="onNavigate"
             class="mt-2">
@@ -18,12 +18,6 @@ export default {
     name: 'base-pagination',
     components: {
         BasePaginationControls
-    },
-    emits: ['update:currentPage'],
-    data() {
-        return {
-            currentPageIntermediate: this.currentPage
-        }
     },
     props: {
         currentPage: {
@@ -40,11 +34,6 @@ export default {
             type: Function,
             required: true,
             default: (page) => {}
-        }
-    },
-    watch: {
-        currentPageIntermediate(newValue) {
-            this.$emit('update:currentPage', newValue);
         }
     }
 }

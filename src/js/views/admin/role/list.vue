@@ -14,7 +14,8 @@
                 :queryObj="LIST_ROLES_QUERY"
                 :limit="8"
                 v-slot="props"
-                class="mt-2">
+                class="mt-2"
+                ref="pagination">
                 <base-table
                     description="Lists all roles"
                     :hoverable="true">
@@ -115,6 +116,7 @@ export default {
             deleteRoleMutation()
             .then(() => {
                 this.bootstrapControl.showToast("success", "Role deleted");
+                this.$refs.pagination.refresh();
             })
             .catch(error => {
                 this.bootstrapControl.showToast("danger", "Failed to delete the role, error:" + error);
