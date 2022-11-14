@@ -40,7 +40,8 @@
                                 Login / Register
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark auth-dropdown">
-                                <login-form/>
+                                <login-form
+                                    :onRegisterClick="onRegisterClick"/>
                             </div>
                         </li>
                     </template>
@@ -91,6 +92,9 @@ export default {
             }
 
             this.$router.push({ name: 'search', query: { q } });
+        },
+        onRegisterClick() {
+            this.$router.push({ name: 'register' });
         }
     }
 }

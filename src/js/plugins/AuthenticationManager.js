@@ -2,7 +2,15 @@ import axios from 'axios';
 import {reactive} from "vue";
 import {useMutation} from "@vue/apollo-composable";
 
-import {LOGIN_MUTATION, LOGOUT_MUTATION, WHOAMI_MUTATION, GUEST_PERMISSIONS_QUERY} from "@graphql/auth";
+import {
+    REGISTER_MUTATION,
+    FORGOT_PASSWORD_MUTATION,
+    RESEND_VERIFY_EMAIL_MUTATION,
+    LOGIN_MUTATION, 
+    LOGOUT_MUTATION, 
+    WHOAMI_MUTATION, 
+    GUEST_PERMISSIONS_QUERY
+} from "@graphql/auth";
 
 export class AuthenticationManager {
     #app
@@ -191,8 +199,123 @@ export class AuthenticationManager {
         this.#app.config.globalProperties.bootstrapControl.showToast("success", message);
     }
 
+    #showInfo(message) {
+        this.#app.config.globalProperties.bootstrapControl.showToast("info", message);
+    }
+
+    async #useToken(token) {
+        return new Promise((resolve, reject) => {
+            this.#setToken(token);
+            this.#updateUser()
+                .then(() => {
+                    this.#showSuccess("You are now logged in");
+                    resolve(true);
+                })
+                .catch(error => {
+                    console.error("Failed to get user information, reason", error);
+                    this.#showError("Failed to get user information, please try again");
+                    reject(false);
+                });
+        });
+    }
+
     can(permission) {
         return this.#state.permissions.includes(permission);
+    }
+
+    resendEmailVerification(username) {
+        return new Promise((resolve, reject) => {
+            const { mutate: resendEmailVerificationMutate } = useMutation(RESEND_VERIFY_EMAIL_MUTATION, {
+                fetchPolicy: 'no-cache'
+            });
+
+            resendEmailVerificationMutate({
+                input: {
+                    username,
+                },
+            }).then(result => {
+                if(result?.data?.resendEmailVerification?.status === 'EMAIL_SENT') {
+                    this.#showInfo('If the username exists and is not verified yet, you will receive an email shortly');
+                    resolve(true);
+                }
+                else {
+                    this.#showError('Server returned an unexpected response');
+                    resolve(false);
+                }
+                
+            }).catch(error => {
+                this.#showError(error);
+                reject(error);
+            });
+        });
+    }
+
+    forgotPassword(username) {
+        return new Promise((resolve, reject) => {
+            const { mutate: forgotPasswordMutate } = useMutation(FORGOT_PASSWORD_MUTATION, {
+                fetchPolicy: 'no-cache'
+            });
+
+            forgotPasswordMutate({
+                input: {
+                    username,
+                },
+            }).then(result => {
+                const msg = result?.data?.forgotPassword?.message;
+                if(result?.data?.forgotPassword?.status === 'EMAIL_SENT') {
+                    this.#showInfo(msg ?? 'An email with instructions to reset your password has been sent');
+                    resolve(true);
+                } else {
+                    this.#showError(msg ?? 'The server returned an unexpected response');
+                    resolve(false);
+                }
+            }).catch(error => {
+                this.#showError(error);
+                reject(error);
+            });
+        });
+    }
+
+    register(username, email, password, password_confirmation) {
+        return new Promise((resolve, reject) => {
+            const { mutate: registerMutate } = useMutation(REGISTER_MUTATION, {
+                fetchPolicy: 'no-cache'
+            });
+
+            // Registers the user
+            // `status` can contain either SUCCESS or MUST_VERIFY_EMAIL
+            // if SUCCESS, `token` will contain the user's access token
+            registerMutate({
+                input: {
+                    username,
+                    email,
+                    password,
+                    password_confirmation
+                },
+            }).then(result => {
+                const status = result?.data?.register?.status;
+                switch(status) {
+                    case "SUCCESS":
+                        this.#showSuccess("Registration complete!");
+                        this.#useToken(result.data.register.token)
+                            .then((res) => resolve(true))
+                            .catch((res) => reject(res));
+                        break;
+
+                    case "MUST_VERIFY_EMAIL":
+                        this.#showInfo("You need to verify your email before you can login");
+                        resolve(false);
+                        break;
+
+                    default:
+                        this.#showError(`Registration returned unknown response: ${status}`);
+                        reject(false);
+                        return;
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 
     login(username, password) {
@@ -208,17 +331,9 @@ export class AuthenticationManager {
                     password,
                 },
             }).then(result => {
-                this.#setToken(result.data.login.token);
-                this.#updateUser()
-                    .then(() => {
-                        this.#showSuccess("You are now logged in");
-                        resolve(true);
-                    })
-                    .catch(error => {
-                        console.error("Failed to get user information, reason", error);
-                        this.#showError("Failed to get user information, please try again");
-                        reject(error);
-                    });
+                this.#useToken(result.data.login.token)
+                    .then((res) => resolve(res))
+                    .catch((res) => reject(res));
             }).catch(error => {
                 reject(error);
             });

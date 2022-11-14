@@ -2,7 +2,7 @@
     <div class="login-form">
         <base-alert v-if="error" type="danger">{{ error }}</base-alert>
 
-        <form class="auth-login-form mb-0" @submit.prevent="login">
+        <form class="auth-login-form" @submit.prevent="login">
             <base-input 
                 v-model="username" 
                 name="username" 
@@ -11,6 +11,7 @@
                 
             <base-input 
                 v-model="password" 
+                type="password"
                 name="password" 
                 placeholder="Password" 
                 autocomplete="current-password"
@@ -18,7 +19,8 @@
 
             <div class="btn-group mt-2">
                 <base-button 
-                    :disabled="loading" 
+                    :disabled="loading"
+                    type="submit"
                     class="btn-primary">
                     <base-spinner v-if="loading" />
                     <template v-else>Login</template>
@@ -26,10 +28,14 @@
 
                 <base-button 
                     :disabled="loading" 
-                    @click="openRegisterPopup"
+                    type="button"
+                    @click="onRegisterClick"
                     class="btn btn-secondary">Register</base-button>
             </div>
         </form>
+
+        <a href="#" @click="forgotPassword" class="link-secondary small mt-3 d-block">Forgot password?</a>
+        <a v-if="settings.emailVerificationEnabled" href="#" @click="newVerifyEmail" class="link-secondary lh-1 mt-2 small d-block">Need a new verification email?</a>
     </div>
 </template>
 
@@ -47,16 +53,34 @@ export default {
         BaseInput,
         BaseAlert
     },
+    props: {
+        onRegisterClick: {
+            type: Function,
+            required: false,
+            default: () => {}
+        }
+    },
     data() {
         return {
             username: '',
             password: '',
             loading: false,
-            error: null
+            error: null,
+            modalId: null
         }
     },
     methods: {
         login() {
+            if(this.username === '') {
+                this.error = 'Please enter your username';
+                return;
+            }
+
+            if(this.password === '') {
+                this.error = 'Please enter your password';
+                return;
+            }
+
             this.loading = true;
             this.error = null;
 
@@ -67,10 +91,41 @@ export default {
                 .finally(() => {
                     this.loading = false;
                     this.$router.push({ to:'/' });
-                })
+                });
         },
-        openRegisterPopup() {
+        forgotPassword() {
+            if(this.username === '') {
+                this.error = 'Please enter your username';
+                return;
+            }
 
+            this.loading = true;
+            this.error = null;
+
+            this.auth.forgotPassword(this.username)
+                .catch(error => {
+                    this.error = error;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        newVerifyEmail() {
+            if(this.username === '') {
+                this.error = 'Please enter your username';
+                return;
+            }
+
+            this.loading = true;
+            this.error = null;
+
+            this.auth.resendEmailVerification(this.username)
+                .catch(error => {
+                    this.error = error;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         }
     }
 }

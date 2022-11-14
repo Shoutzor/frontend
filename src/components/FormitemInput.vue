@@ -1,70 +1,81 @@
 <template>
     <div class="form-group">
-        <label class="form-label">Name</label>
+        <label v-if="showLabel" class="form-label">{{ name }}</label>
         <div>
-            <base-input 
+            <base-input
+                v-model="value"
+                :id="id"
+                :type="type"
+                :disabled="disabled"
                 :name="name"
-                :value="value"
-                :placeholder="name"
+                :placeholder="placeholder"
+                :autocomplete="autocomplete"
                 />
-            <input :disabled="role.protected"
-                :value="role.name"
-                autocomplete="off"
-                class="form-control"
-                placeholder="Role name" type="text" />
-        </div>
-    </div>
-    
-    <div :class="classes">
-        <input :checked="checked" class="form-check-input" type="checkbox" :id="id" :role="isSwitch ? 'switch' : ''">
-        <div class="text-truncate">
-            <label :for="id">
-                <div class="text-body d-block">{{ name }}</div>
-                <small v-if="description" class="d-block text-muted text-truncate mt-n1">{{ description }}</small>
-            </label>
         </div>
     </div>
 </template>
 
 <script>
-import { reactive, computed } from "vue";
+import BaseInput from "@components/BaseInput.vue";
 
 export default {
     name: 'formitem-input',
+    emits: ['update:modelValue'],
+    components: {
+        BaseInput
+    },
     props: {
+        showLabel: {
+            type: Boolean,
+            required: false,
+            default: true
+        },
         id: {
             type: String,
-            required: true
+            required: false
         },
         name: {
             type: String,
             required: true
+        },
+        placeholder: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        type: {
+            type: String,
+            required: false,
+            default: 'text'
         },
         description: {
             type: String,
             required: false,
             default: ''
         },
-        isSwitch: {
+        modelValue: {
+            type: String,
+            required: true
+        },
+        disabled: {
             type: Boolean,
             required: false,
             default: false
         },
-        value: {
-            type: Boolean,
+        autocomplete: {
+            type: String,
             required: false,
-            default: false
+            default: "off"
         }
     },
-    setup(props) {
-        props = reactive(props);
-
+    data() {
         return {
-            classes: computed(() => ({
-                'list-item': true,
-                'form-check': true,
-                'form-switch': props.isSwitch
-            }))
+            value: this.modelValue
+        };
+    },
+    watch: {
+        value(newValue) {
+            this.$emit('update:modelValue', newValue);
         }
     }
 }

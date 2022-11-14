@@ -29,6 +29,8 @@ npm run dev
 ```
 Make sure to add `shoutzor.local` to your `hosts` file pointing to `127.0.0.1`; The website will then be available at `http://shoutzor.local:5173/`
 
+If you change the URL or port to something else, make sure you modify the `FRONTEND_URL` environment variable accordingly for the `backend`.
+
 ## Kindly supported by
 
 * [JetBrains](https://www.jetbrains.com/?from=Shoutz0r)

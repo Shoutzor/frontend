@@ -2,9 +2,9 @@
     <div class="load-screen text-center">
         <shoutzor-logo alt="Shoutz0r logo" class="logo" />
 
-        <div class="center-block">
+        <div class="center-block mt-3">
             <BaseSpinner />
-            <div v-if="message.length > 0" class="mt-3">
+            <div v-if="message.length > 0" class="mt-2">
                 <p>{{ message }}</p>
             </div>
         </div>

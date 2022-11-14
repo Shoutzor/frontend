@@ -22,9 +22,13 @@
                             </base-button>
                         </div>
                     </template>
+                    <template v-else-if="registering">
+                        <h2 class="mb-3 text-center">Create account</h2>
+                        <register-form :on-login-click="onLoginClick" />
+                    </template>
                     <template v-else>
                         <h2 class="mb-3 text-center">Login to your account</h2>
-                        <login-form />
+                        <login-form :on-register-click="onRegisterClick" />
                     </template>
                 </div>
             </div>
@@ -37,6 +41,7 @@ import ShoutzorLogo from "@static/images/shoutzor-logo.svg?component";
 import BaseAlert from "@components/BaseAlert.vue";
 import BaseButton from "@components/BaseButton.vue";
 import LoginForm from "@components/LoginForm.vue";
+import RegisterForm from "@components/RegisterForm.vue";
 
 export default {
     name: 'login-screen',
@@ -44,11 +49,13 @@ export default {
         ShoutzorLogo,
         BaseButton,
         BaseAlert,
-        LoginForm
+        LoginForm,
+        RegisterForm
     },
     data() {
         return {
-            loading: false
+            loading: false,
+            registering: false
         };
     },
     computed: {
@@ -64,6 +71,12 @@ export default {
                 .finally(() => {
                     this.loading = false;
                 });
+        },
+        onRegisterClick() {
+            this.registering = true;
+        },
+        onLoginClick() {
+            this.registering = false;
         }
     }
 }

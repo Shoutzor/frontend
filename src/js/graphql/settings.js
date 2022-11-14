@@ -1,12 +1,13 @@
 import gql from "graphql-tag";
 
-export const SETTING_QUERY = gql`
-    query setting_query($id: ID!) {
-        album(id: $id) {
-            id,
-            image,
-            title,
-            summary
+export const GET_SETTING_QUERY = gql`
+    query setting_query($key: ID!) {
+        setting(key: $key) {
+            key
+            value
+            name
+            description
+            readonly
         }
     }`;
 

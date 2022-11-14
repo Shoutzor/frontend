@@ -10,6 +10,7 @@ import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subsc
 import router from "@js/router";
 import App from "@js/views/App.vue";
 import { AuthenticationPlugin } from "@js/plugins/AuthenticationManager.js";
+import { SettingsPlugin } from "@js/plugins/SettingsManager.js";
 import { RequestManagerPlugin } from "@js/plugins/RequestManager.js";
 import { MediaPlayerPlugin } from "@js/plugins/MediaPlayer.js";
 import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
@@ -146,6 +147,9 @@ fetch('/config.json')
 
     app
     .use(BootstrapControlPlugin)
+    .use(SettingsPlugin, {
+        apolloClient
+    })
     .use(AuthenticationPlugin, {
         tokenName: 'token',
         echoClient,

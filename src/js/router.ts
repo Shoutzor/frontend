@@ -84,6 +84,13 @@ const routes = [
                 requiresAuth: true
             }
         }, {
+            name: 'register',
+            path: '/register',
+            component: Register,
+            meta: {
+                requiresAuth: false
+            }
+        }, {
             name: 'admin',
             path: '/admin',
             redirect: {
