@@ -1,6 +1,8 @@
 <template>
     <div class="login-form">
-        <base-alert v-if="error" type="danger">{{ error }}</base-alert>
+        <base-alert v-if="errors" type="danger">
+            <template v-for="error in errors">{{ error }}<br /></template>
+        </base-alert>
 
         <form class="auth-register-form" @submit.prevent="register">
             <formitem-input 
@@ -87,14 +89,14 @@ export default {
             password: '',
             passwordConfirm: '',
             loading: false,
-            error: null,
+            errors: null,
             modalId: null
         }
     },
     methods: {
         register() {
             this.loading = true;
-            this.error = null;
+            this.errors = null;
 
             this.auth.register(this.username, this.email, this.password, this.passwordConfirm)
                 .then((result) => {
@@ -105,7 +107,14 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.error = error;
+                    const p = this.parseMessageBag(error.graphQLErrors);
+
+                    if(p.hasValidationErrors) {
+                        this.errors = p.getValidationErrorsList();
+                    }
+                    else {
+                        this.errors = [error];
+                    }
                 })
                 .finally(() => {
                     this.loading = false;                    

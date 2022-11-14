@@ -9,6 +9,7 @@ import {ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client
 import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subscription-link";
 import router from "@js/router";
 import App from "@js/views/App.vue";
+import { MessageBagParserPlugin } from "@js/plugins/MessageBagParser.js"
 import { AuthenticationPlugin } from "@js/plugins/AuthenticationManager.js";
 import { SettingsPlugin } from "@js/plugins/SettingsManager.js";
 import { RequestManagerPlugin } from "@js/plugins/RequestManager.js";
@@ -146,6 +147,7 @@ fetch('/config.json')
     });
 
     app
+    .use(MessageBagParserPlugin)
     .use(BootstrapControlPlugin)
     .use(SettingsPlugin, {
         apolloClient

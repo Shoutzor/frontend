@@ -66,7 +66,6 @@ export default {
         }
     },
     mounted() {
-        console.log("mounted", this.id, this.hash, this.exp, this.sig);
         const { mutate: verifyEmailMutate } = useMutation(VERIFY_EMAIL_MUTATION, {
             fetchPolicy: 'no-cache'
         });

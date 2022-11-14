@@ -118,7 +118,6 @@ export default {
     },
     methods: {
         onPlayClick() {
-            console.log(this.playerStatus);
             if(this.playerStatus === PlayerState.STOPPED) {
                 this.mediaPlayer.play();
             } else {

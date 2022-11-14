@@ -1,6 +1,8 @@
 <template>
     <div class="login-form">
-        <base-alert v-if="error" type="danger">{{ error }}</base-alert>
+        <base-alert v-if="errors" type="danger">
+            <template v-for="error in errors">{{ error }}<br /></template>
+        </base-alert>
 
         <form class="auth-login-form" @submit.prevent="login">
             <base-input 
@@ -65,28 +67,35 @@ export default {
             username: '',
             password: '',
             loading: false,
-            error: null,
+            errors: null,
             modalId: null
         }
     },
     methods: {
         login() {
             if(this.username === '') {
-                this.error = 'Please enter your username';
+                this.errors = ['Please enter your username'];
                 return;
             }
 
             if(this.password === '') {
-                this.error = 'Please enter your password';
+                this.errors = ['Please enter your password'];
                 return;
             }
 
             this.loading = true;
-            this.error = null;
+            this.errors = null;
 
             this.auth.login(this.username, this.password)
                 .catch(error => {
-                    this.error = error;
+                    const p = this.parseMessageBag(error.graphQLErrors);
+
+                    if(p.hasValidationErrors) {
+                        this.errors = p.getValidationErrorsList();
+                    }
+                    else {
+                        this.errors = [error];
+                    }
                 })
                 .finally(() => {
                     this.loading = false;
@@ -100,11 +109,18 @@ export default {
             }
 
             this.loading = true;
-            this.error = null;
+            this.errors = null;
 
             this.auth.forgotPassword(this.username)
                 .catch(error => {
-                    this.error = error;
+                    const p = this.parseMessageBag(error.graphQLErrors);
+
+                    if(p.hasValidationErrors) {
+                        this.errors = p.getValidationErrorsList();
+                    }
+                    else {
+                        this.errors = [error];
+                    }
                 })
                 .finally(() => {
                     this.loading = false;
@@ -117,11 +133,18 @@ export default {
             }
 
             this.loading = true;
-            this.error = null;
+            this.errors = null;
 
             this.auth.resendEmailVerification(this.username)
                 .catch(error => {
-                    this.error = error;
+                    const p = this.parseMessageBag(error.graphQLErrors);
+
+                    if(p.hasValidationErrors) {
+                        this.errors = p.getValidationErrorsList();
+                    }
+                    else {
+                        this.errors = [error];
+                    }
                 })
                 .finally(() => {
                     this.loading = false;
