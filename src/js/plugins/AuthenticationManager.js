@@ -11,6 +11,7 @@ import {
     WHOAMI_MUTATION, 
     GUEST_PERMISSIONS_QUERY
 } from "@graphql/auth";
+import { BIconReplyAll } from 'bootstrap-icons-vue';
 
 export class AuthenticationManager {
     #app
@@ -300,6 +301,11 @@ export class AuthenticationManager {
                         this.#useToken(result.data.register.token)
                             .then((res) => resolve(true))
                             .catch((res) => reject(res));
+                        break;
+
+                    case "MANUAL_APPROVE_REQUIRED":
+                        this.#showInfo("Your account needs to be approved before you can login");
+                        resolve(false);
                         break;
 
                     case "MUST_VERIFY_EMAIL":
