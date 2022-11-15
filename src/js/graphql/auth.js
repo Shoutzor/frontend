@@ -53,15 +53,6 @@ export const LOGOUT_MUTATION = gql`
         }
     }`;
 
-export const GUEST_PERMISSIONS_QUERY = gql`
-    query guest_permissions_query {
-        role(name: "guest") {
-            permissions {
-                name
-            }
-        }
-    }`;
-
 export const WHOAMI_MUTATION = gql`
     mutation whoami_mutation {
         whoami {

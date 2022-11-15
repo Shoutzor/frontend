@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {reactive} from "vue";
-import {useMutation} from "@vue/apollo-composable";
+import {useMutation, useQuery, useSubscription} from "@vue/apollo-composable";
 
 import {
     REGISTER_MUTATION,
@@ -8,10 +8,13 @@ import {
     RESEND_VERIFY_EMAIL_MUTATION,
     LOGIN_MUTATION, 
     LOGOUT_MUTATION, 
-    WHOAMI_MUTATION, 
-    GUEST_PERMISSIONS_QUERY
+    WHOAMI_MUTATION
 } from "@graphql/auth";
-import { BIconReplyAll } from 'bootstrap-icons-vue';
+
+import {
+    GET_ROLE_QUERY,
+    ROLE_UPDATED_SUBSCRIPTION
+} from "@graphql/roles";
 
 export class AuthenticationManager {
     #app
@@ -152,17 +155,34 @@ export class AuthenticationManager {
 
     #updateGuestPermissions() {
         return new Promise((resolve, reject) => {
-            this.#apolloClient.query({
-                query: GUEST_PERMISSIONS_QUERY
-            })
-            .then((result) => {
-                let permissions = result.data?.role?.permissions;
-                this.#guestPermissions = (permissions === null) ? [] : permissions.map(p => p.name);
+            const { onResult, subscribeToMore } = useQuery(GET_ROLE_QUERY, {
+                name: "guest"
+            });
+
+            onResult((result) => {
+                let role = result.data?.role;
+                if(!role) {
+                    this.#guestPermissions = [];
+                    return reject("Role not found");
+                }
+
+                this.#guestPermissions = (role.permissions === null) ? [] : role.permissions.map(p => p.name);
+
+                subscribeToMore({
+                    document: ROLE_UPDATED_SUBSCRIPTION,
+                    variables: {
+                        id: role.id
+                    },
+                    updateQuery: (prev, { subscriptionData }) => {
+                        console.dir(subscriptionData);
+    
+                        if(!subscriptionData.data) return prev;
+    
+                        return subscriptionData.data.premissions;
+                    }
+                });
+
                 resolve();
-            })
-            .catch((error) => {
-                this.#guestPermissions = [];
-                reject("Failed updating the guest permissions");
             });
         });
     }

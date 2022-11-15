@@ -17,8 +17,8 @@ export const LIST_ROLES_QUERY = gql`
     }`;
 
 export const GET_ROLE_QUERY = gql`
-    query get_role_query($id: ID) {
-        role(id: $id) {
+    query get_role_query($id: ID, $name: String) {
+        role(id: $id, name: $name) {
             id
             name
             description
@@ -64,5 +64,15 @@ export const DELETE_ROLE_MUTATION = gql`
             id: $id
         ){
             id
+        }
+    }`;
+
+export const ROLE_UPDATED_SUBSCRIPTION = gql`
+    subscription role_updated_subscription($id: ID!) {
+        roleUpdated(id: $id) {
+            id
+            permissions {
+                name
+            }
         }
     }`;
