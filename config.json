@@ -3,8 +3,8 @@
     "APP_ENV": "dev",
     "APP_URL": "http://shoutzor.local:8000",
     "BROADCAST_URL": "",
-    "MIX_PUSHER_APP_KEY": "",
-    "MIX_PUSHER_SOCKET_HOST": "",
-    "MIX_PUSHER_PORT": 443,
-    "MIX_PUSHER_SCHEME": "https"
+    "PUSHER_APP_KEY": "shoutzor",
+    "PUSHER_HOST": "shoutzor.local",
+    "PUSHER_PORT": 6001,
+    "PUSHER_SCHEME": "http"
 }

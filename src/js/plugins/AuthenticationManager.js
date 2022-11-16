@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {reactive} from "vue";
+import {watch, reactive} from "vue";
 import {useMutation, useQuery, useSubscription} from "@vue/apollo-composable";
 
 import {
@@ -27,7 +27,6 @@ export class AuthenticationManager {
 
     #tokenName;
     #token;
-    #guestPermissions;
     #state;
 
     constructor(app, tokenName, echoClient, httpClient, apolloClient) {
@@ -38,12 +37,12 @@ export class AuthenticationManager {
         this.#apolloClient = apolloClient;
 
         this.#token = null;
-        this.#guestPermissions = [];
 
         this.#state = reactive({
             isInitialized: false,
             user: null,
-            permissions: []
+            permissions: [],
+            guestPermissions: []
         });
 
         this.#initializedPromise = this.#initialize();
@@ -110,7 +109,7 @@ export class AuthenticationManager {
         return new Promise(async (resolve, reject) => {
             let token = localStorage.getItem(this.#tokenName);
             let sessionPromise = null;
-            let guestPermissionsPromise = await this.#updateGuestPermissions();
+            let guestPermissionsPromise = await this.#loadGuestPermissions();
 
             if(!!token) {
                 this.#setToken(token);
@@ -126,12 +125,31 @@ export class AuthenticationManager {
 
             // Once all promises are resolved, the AuthenticationManager has finished initializing
             Promise.allSettled([guestPermissionsPromise, sessionPromise])
+                .then(() => {
+                    this.#listenToRoleChanges();
+                })
                 .finally(() => {
                     resolve(true);
                 });
         })
         .then(() => {
             this.#state.isInitialized = true;
+        });
+    }
+
+    #listenToRoleChanges() {
+        useSubscription(ROLE_UPDATED_SUBSCRIPTION).onResult(({ data }) => {
+            const updatedRole = data.roleUpdated;
+            // Check if the updated role is the guest permissions
+            if(updatedRole.name === 'guest') {
+                this.#state.guestPermissions = updatedRole.permissions.map(p => p.name);
+            }
+
+            // Check if any of the updated roles is one of the user
+            if(this.isAuthenticated && this.user.roles.map(r => r.id).includes(updatedRole.id)) {
+                this.user.roles[this.user.roles.findIndex(r => r.id === updatedRole.id)].permissions = updatedRole.permissions;
+                this.#updateUserPermissions();
+            }
         });
     }
 
@@ -153,38 +171,38 @@ export class AuthenticationManager {
         });
     }
 
-    #updateGuestPermissions() {
+    #loadGuestPermissions() {
         return new Promise((resolve, reject) => {
-            const { onResult, subscribeToMore } = useQuery(GET_ROLE_QUERY, {
+            const { onResult } = useQuery(GET_ROLE_QUERY, {
                 name: "guest"
             });
 
             onResult((result) => {
                 let role = result.data?.role;
                 if(!role) {
-                    this.#guestPermissions = [];
-                    return reject("Role not found");
+                    this.#state.guestPermissions = [];
+                    this.#updateGuestPermissions();
+                    return reject("Role not found, Shoutz0r installation might be broken");
                 }
 
-                this.#guestPermissions = (role.permissions === null) ? [] : role.permissions.map(p => p.name);
+                this.#state.guestPermissions = (role.permissions === null) ? [] : role.permissions.map(p => p.name);
+                this.#updateGuestPermissions();
 
-                subscribeToMore({
-                    document: ROLE_UPDATED_SUBSCRIPTION,
-                    variables: {
-                        id: role.id
-                    },
-                    updateQuery: (prev, { subscriptionData }) => {
-                        console.dir(subscriptionData);
-    
-                        if(!subscriptionData.data) return prev;
-    
-                        return subscriptionData.data.premissions;
-                    }
+                watch(this.#state.guestPermissions, function(newValue, oldValue) {
+                    this.#updateGuestPermissions();
                 });
 
                 resolve();
             });
         });
+    }
+
+    #updateGuestPermissions() {
+        if(this.isAuthenticated) {
+            return;
+        }
+
+        this.#setPermissions(this.#state.guestPermissions);
     }
 
     // This function will attempt to load the user object who is the owner of the token
@@ -197,7 +215,7 @@ export class AuthenticationManager {
             whoamiMutate()
                 .then(result => {
                     this.#setUser(result.data.whoami.user);
-                    this.#setPermissions(result.data.whoami.user.allPermissions.map(p => p.name));
+                    this.#updateUserPermissions();
                     resolve(true);
                 })
                 .catch(error => {
@@ -206,9 +224,23 @@ export class AuthenticationManager {
         });
     }
 
+    #updateUserPermissions() {
+        const permissions = [].concat(
+            // Get a list of all permissions from the roles (combined into flat array)
+            this.user.roles.reduce((prev, cur) => {
+                return prev.concat(cur.permissions.map(p => p.name));
+            }, 
+            // Get any user-specific permissions
+            this.user.permissions.map(p => p.name))
+        );
+
+        // Set the new permissions
+        this.#setPermissions(permissions);
+    }
+
     #invalidateSession() {
         this.#setUser(null);
-        this.#setPermissions(this.#guestPermissions);
+        this.#updateGuestPermissions();
         this.#removeToken();
     }
 

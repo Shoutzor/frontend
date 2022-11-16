@@ -61,8 +61,16 @@ export const WHOAMI_MUTATION = gql`
                 username
                 email
                 is_admin
-                allPermissions {
+                permissions {
                     name
+                }
+                roles {
+                    id
+                    name
+                    permissions {
+                        id
+                        name
+                    }
                 }
             }
         }

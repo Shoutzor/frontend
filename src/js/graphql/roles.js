@@ -68,10 +68,12 @@ export const DELETE_ROLE_MUTATION = gql`
     }`;
 
 export const ROLE_UPDATED_SUBSCRIPTION = gql`
-    subscription role_updated_subscription($id: ID!) {
+    subscription role_updated_subscription($id: ID) {
         roleUpdated(id: $id) {
             id
+            name
             permissions {
+                id
                 name
             }
         }

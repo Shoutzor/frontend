@@ -42,20 +42,19 @@ fetch('/config.json')
 
     echoClient = new Echo({
         broadcaster: 'pusher',
-        key: config.MIX_PUSHER_APP_KEY,
-        wsHost: config.MIX_PUSHER_SOCKET_HOST,
-        wsPort: config.MIX_PUSHER_PORT,
-        wssPort: config.MIX_PUSHER_PORT,
-        forceTLS: config.MIX_PUSHER_SCHEME === 'https',
+        key: config.PUSHER_APP_KEY,
+        wsHost: config.PUSHER_HOST,
+        wsPort: config.PUSHER_PORT,
+        wssPort: config.PUSHER_PORT,
+        forceTLS: config.PUSHER_SCHEME === 'https',
         encrypted: true,
         disableStats: true,
-        enabledTransports: [config.MIX_PUSHER_SCHEME],
-        authEndpoint: '/graphql/subscriptions/auth'
+        enabledTransports: ['ws', 'wss'],
+        authEndpoint: config.APP_URL + '/graphql/subscriptions/auth'
     });
 
     // HTTP connection to the API
     httpLink = new HttpLink({
-        // You should use an absolute URL here
         uri: config.APP_URL + '/graphql',
         headers: {}
     });
