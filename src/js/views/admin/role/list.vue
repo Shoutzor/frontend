@@ -17,6 +17,7 @@
                 class="mt-2"
                 ref="pagination">
                 <base-table
+                    v-if="!props.isLoading && !props.error"
                     description="Lists all roles"
                     :hoverable="true">
                     <template #header>

@@ -28,11 +28,15 @@ export const LASTPLAYED_QUERY = gql`
     }`;
 
 export const COMINGUP_QUERY = gql`
-    query comingup_query {
-        requests(where: { column: PLAYED_AT, operator: IS_NULL }) {
+    query comingup_query($page: Int, $limit: Int) {
+        requests(
+            page: $page,
+            first: $limit,
+            where: { column: PLAYED_AT, operator: IS_NULL }
+        ) {
             paginatorInfo{
                 total
-                hasMorePages
+                lastPage
             }
             data {
                 id
@@ -56,14 +60,16 @@ export const COMINGUP_QUERY = gql`
     }`;
 
 export const HISTORY_QUERY = gql`
-    query history_query {
+    query history_query($page: Int, $limit: Int) {
         requests(
+            page: $page,
+            first: $limit,
             where: { column: PLAYED_AT, operator: IS_NOT_NULL }
             orderBy: { column: "played_at", order: DESC }
         ) {
             paginatorInfo{
                 total
-                hasMorePages
+                lastPage
             }
             data {
                 id
@@ -102,25 +108,5 @@ export const REQUESTADDED_SUBSCRIPTION = gql`
     subscription requestadded_subscription {
         requestAdded {
             id
-            media {
-                id
-                title
-                is_video
-                duration
-                album {
-                    id
-                    title
-                }
-                artists {
-                    id,
-                    name
-                }
-            }
-            requested_by {
-                id
-                username
-            }
-            requested_at
-            played_at
         }
     }`;

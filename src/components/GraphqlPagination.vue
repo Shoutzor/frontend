@@ -2,24 +2,27 @@
     <base-pagination
         :current-page="currentPage"
         :total-pages="totalPages"
+        :hideControlsForSinglePage="hideControlsForSinglePage"
         :on-navigate="onNavigate"
         >
-        <slot name="loading" v-if="isLoading">
-            <base-spinner />
-        </slot>
+        <slot :itemsOnPage="itemsOnPage" :isLoading="isLoading" :error="error">
+            <template v-if="isLoading">
+                <base-spinner />
+            </template>
 
-        <slot name="error" :refresh="refresh" v-else-if="error">
-            <p>Failed loading the data</p>
-            <base-button @click="refresh">Retry</base-button>
+            <template 
+                v-else-if="error"
+                :refresh="refresh">
+                <p>Failed loading the data</p>
+                <base-button @click="refresh">Retry</base-button>
+            </template>    
         </slot>
-
-        <slot :itemsOnPage="itemsOnPage" v-else></slot>
     </base-pagination>
 </template>
 
 <script>
 import {computed, reactive} from "vue";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useSubscription } from "@vue/apollo-composable";
 import BaseButton from "@components/BaseButton.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
 import BasePagination from "@components/BasePagination.vue";
@@ -36,6 +39,21 @@ export default {
             type: Object,
             required: true
         },
+        queryVars: {
+            type: Object,
+            required: false,
+            default: {}
+        },
+        refreshObj: {
+            type: Object,
+            required: false,
+            default: null
+        },
+        refreshVars: {
+            type: Object,
+            required: false,
+            default: null
+        },
         cachePolicy: {
             type: String,
             required: false,
@@ -50,6 +68,11 @@ export default {
             type: Object,
             required: false,
             default: {}
+        },
+        hideControlsForSinglePage: {
+            type: Boolean,
+            required: false,
+            default: false
         },
         beforePageChange: {
             type: Function,
@@ -73,7 +96,8 @@ export default {
             error: null,
             currentPage: 1,
             totalPages: 1,
-            itemsOnPage: []
+            itemsOnPage: [],
+            refetch: null
         }
     },
     setup(props) {
@@ -91,7 +115,45 @@ export default {
         }
     },
     mounted() {
-        this.loadPage(1);
+        const { 
+            onResult,
+            refetch,
+            loading,
+            error
+        } = useQuery(
+            this.queryObj, 
+            Object.assign({
+                page: this.currentPage,
+                limit: this.limit,
+                where: this.where
+            }, this.queryVars), 
+            {
+                fetchPolicy: this.cachePolicy
+        });
+
+        this.isLoading = loading;
+        this.error = error;
+        this.refetch = refetch;
+
+        onResult((result) => {
+            const data = result.data[Object.keys(result.data)[0]];
+            this.totalPages = data.paginatorInfo.lastPage;
+            this.itemsOnPage = data.data;
+
+            // If the current page is no longer available, move to the last available page
+            if(this.currentPage > this.totalPages) {
+                this.loadPage(this.totalPages);
+            }
+        });
+
+        if(this.refreshObj) {
+            // Refresh query when a subscription event is received
+            const s = useSubscription(this.refreshObj, this.refreshVars);
+            s.onResult((result) => {
+                console.log("TRIGGERED");
+                refetch();
+            });
+        }
     },
     methods: {
         async onNavigate(page) {
@@ -108,27 +170,7 @@ export default {
         },
         async loadPage(page) {
             this.currentPage = page;
-
-            const { 
-                onResult,
-                loading,
-                error
-            } = useQuery(this.queryObj, {
-                page: this.currentPage,
-                limit: this.limit,
-                where: this.where
-            }, {
-                fetchPolicy: this.cachePolicy
-            });
-
-            this.isLoading = loading;
-            this.error = error;
-
-            onResult((result) => {
-                const data = result.data[Object.keys(result.data)[0]];
-                this.totalPages = data.paginatorInfo.lastPage;
-                this.itemsOnPage = data.data;
-            });
+            this.refetch();
         }
     }
 }

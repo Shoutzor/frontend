@@ -18,6 +18,7 @@ import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
 import {UploadManagerPlugin} from "@js/plugins/UploadManager.js";
 import { DocumentNode } from 'graphql/language/ast';
 import { getOperationName } from "@apollo/client/utilities";
+import { antiXSS } from '@js/plugins/SanitizationPlugin';
 
 // Predefine instances
 let emitter;
@@ -89,11 +90,7 @@ fetch('/config.json')
              * @returns 
              */
             antiXSS(input : String) {
-                return String(input)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+                return antiXSS(input);
             },
 
             /**

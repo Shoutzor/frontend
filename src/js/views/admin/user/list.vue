@@ -9,6 +9,7 @@
                 v-slot="props"
                 ref="pagination">
                 <base-table
+                    v-if="!props.isLoading && !props.error"
                     description="Lists all user accounts"
                     :hoverable="true">
                     <template #header>

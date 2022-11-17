@@ -1,5 +1,6 @@
 import {useMutation} from "@vue/apollo-composable";
 import {ADDREQUEST_MUTATION} from "@graphql/requests";
+import { antiXSS } from '@js/plugins/SanitizationPlugin';
 
 export class RequestManager {
 
@@ -15,7 +16,7 @@ export class RequestManager {
 
     request(id, title) {
         // Making sure nothing in the media title can cause an XSS vulnerability
-        let escapedTitle = this.#app.antiXSS(title);
+        let escapedTitle = antiXSS(title);
 
         this.#modalId = this.#bootstrapControl.showModal({
             onConfirm: () => { this.#makeRequest(id); },

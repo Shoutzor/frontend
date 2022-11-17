@@ -65,11 +65,13 @@ export default {
                             name: "History",
                             route: "history",
                             icon: "b-icon-clock-history"
-                        }, {
+                        }
+                        /*, {
                             name: "Most Played",
                             route: "popular",
                             icon: "b-icon-star"
-                        }]
+                        }*/
+                        ]
                     },
                     {
                         name: "User zone",
