@@ -1,6 +1,7 @@
 <template>
     <graphql-pagination
         :queryObj="HISTORY_QUERY"
+        :refreshObj="REQUESTPLAYED_SUBSCRIPTION"
         :limit="8"
         :hideControlsForSinglePage="false"
         v-slot="props"
@@ -13,7 +14,6 @@
                 <tr>
                     <th scope="col"></th>
                     <th scope="col">Media</th>
-                    <th scope="col">Album</th>
                     <th scope="col">Requested by</th>
                     <th scope="col">Duration</th>
                     <th scope="col">Time played</th>
@@ -35,15 +35,12 @@
                         <td>
                             <span class="placeholder col-10"></span>
                         </td>
-                        <td>
-                            <span class="placeholder col-10"></span>
-                        </td>
                     </tr>
                 </template>
 
                 <template v-else-if="props.error">
                     <tr>
-                        <td colspan="5">Something went wrong while attempting to fetch the queue</td>
+                        <td colspan="4">Something went wrong while attempting to fetch the history</td>
                     </tr>
                 </template>
 
@@ -55,15 +52,6 @@
                         <td>
                             <div>{{ request.media.title }}</div>
                             <artist-list :artists="request.media.artists" class="small text-muted"></artist-list>
-                        </td>
-                        <td>
-                            <div v-if="request.media.album !== null">
-                                <router-link
-                                    :to="{ name:'album', params:{ id: request.media.album.id } }"
-                                    class="album"
-                                >{{ request.media.album.title }}
-                                </router-link>
-                            </div>
                         </td>
                         <td>
                             <div v-if="request.requested_by">{{ request.requested_by.username }}</div>
@@ -80,7 +68,7 @@
 
                 <template v-else>
                     <tr>
-                        <td colspan="5">No songs in queue</td>
+                        <td colspan="4">No media played yet</td>
                     </tr>
                 </template>
             </template>
@@ -89,7 +77,7 @@
 </template>
 
 <script>
-import {HISTORY_QUERY} from "@graphql/requests";
+import {HISTORY_QUERY, REQUESTPLAYED_SUBSCRIPTION} from "@graphql/requests";
 import ArtistList from "@components/ArtistList.vue";
 import BaseTable from "@components/BaseTable.vue";
 import BeautifiedTime from "@components/BeautifiedTime.vue";
@@ -109,7 +97,8 @@ export default {
     },
     data() {
         return {
-            HISTORY_QUERY
+            HISTORY_QUERY,
+            REQUESTPLAYED_SUBSCRIPTION
         }
     }
 }

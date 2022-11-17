@@ -110,3 +110,10 @@ export const REQUESTADDED_SUBSCRIPTION = gql`
             id
         }
     }`;
+
+export const REQUESTPLAYED_SUBSCRIPTION = gql`
+    subscription requestplayed_subscription {
+        requestPlayed {
+            id
+        }
+    }`;
