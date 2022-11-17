@@ -5,8 +5,10 @@ import Pusher from 'pusher-js';
 import { createApp } from 'vue'
 import {BootstrapIconsPlugin} from 'bootstrap-icons-vue';
 import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
-import {ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client/core'
+import {ApolloClient, ApolloLink, HttpLink, InMemoryCache, concat } from '@apollo/client/core'
 import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subscription-link";
+import { createUploadLink } from 'apollo-upload-client';
+import CustomFetch from '@js/plugins/ApolloUploadCustomFetch.js';
 import router from "@js/router";
 import App from "@js/views/App.vue";
 import { MessageBagParserPlugin } from "@js/plugins/MessageBagParser.js"
@@ -55,23 +57,39 @@ fetch('/config.json')
     });
 
     // HTTP connection to the API
-    httpLink = new HttpLink({
+    httpLink = createUploadLink({
         uri: config.APP_URL + '/graphql',
-        headers: {}
+        fetch: CustomFetch
     });
+    
+    const authMiddleware = new ApolloLink((operation, forward) => {
+        // add the authorization to the headers
+        operation.setContext(({ headers = {} }) => {
+            const token = app?.config?.globalProperties?.auth?.token;
+            return {
+                headers: {
+                    ...headers,
+                    authorization: (token) ? `Bearer ${token}` : null,
+                }
+            }
+        });
+      
+        return forward(operation);
+      })
 
+      
     // Create the apollo client
     apolloClient = new ApolloClient({
-        link: ApolloLink.from([
+        link: concat(authMiddleware, ApolloLink.from([
             createLighthouseSubscriptionLink(echoClient),
             httpLink
-        ]),
+        ])),
         cache: new InMemoryCache(),
         connectToDevTools: config.APP_DEBUG,
         defaultOptions: {
             query: {
                 fetchPolicy: 'network-only',
-            },
+            }
         }
     });
 
@@ -161,11 +179,14 @@ fetch('/config.json')
         echoClient
     })
     .use(UploadManagerPlugin, {
+        apolloClient,
         echoClient
     })
     .use(RequestManagerPlugin)
     .use(BootstrapIconsPlugin)
     .mount('#shoutzor');
+
+    console.dir(app);
 })
 .catch(error => {
     console.error("An error occured while initializing", error);

@@ -150,7 +150,6 @@ export default {
             // Refresh query when a subscription event is received
             const s = useSubscription(this.refreshObj, this.refreshVars);
             s.onResult((result) => {
-                console.log("TRIGGERED");
                 refetch();
             });
         }

@@ -1,13 +1,16 @@
-import axios from 'axios';
+import { useMutation } from '@vue/apollo-composable';
 import { reactive } from 'vue';
+import { UPLOAD_MUTATION } from '@js/graphql/uploads';
 
 export class UploadManager {
 
+    #apolloClient
     #echoClient
 
     #state
 
-    constructor(echoClient) {
+    constructor(apolloClient, echoClient) {
+        this.#apolloClient = apolloClient;
         this.#echoClient = echoClient;
 
         this.#state = reactive({
@@ -73,24 +76,25 @@ export class UploadManager {
         this.#state.currentFile = currentFile.name;
 
         let formData = new FormData();
-        formData.append("media", currentFile);
+        formData.append("file", currentFile);
 
-        // Upload the file
-        // TODO replace with GraphQL upload mutation eventually
-        axios.post("/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                },
-                onUploadProgress: (event) => {
-                    this.#state.progress = Math.floor((event.loaded / event.total) * 100);
+        try {
+            this.#apolloClient.mutate({
+                // Query
+                mutation: UPLOAD_MUTATION,
+                // Parameters
+                variables: {
+                    file: currentFile
                 }
             })
-            .then(response => {
-                console.log("upload response: ", response);
+            .then(({data}) => {
+                console.log("upload response: ", data.upload);
                 //On success?
                 //this.message = response.data.message;
             })
             .catch(error => {
+                console.log("error", error);
+
                 //Add the file to the failed uploads list to inform the user
                 this.#state.failedFiles.push(
                         Object.assign({
@@ -101,6 +105,7 @@ export class UploadManager {
                     );
             })
             .finally(() => {
+                console.log("finally called");
                 //Update status variables
                 this.#state.progress = 0;
                 this.#state.currentFile = null;
@@ -114,6 +119,10 @@ export class UploadManager {
                     this.#state.isUploading = false;
                 }
             });
+        }
+        catch {
+
+        }
     }
 
     parseError(error) {
@@ -147,6 +156,6 @@ export class UploadManager {
 
 export const UploadManagerPlugin = {
     install: (app, options) => {
-        app.config.globalProperties.uploadManager = new UploadManager(options.echoClient);
+        app.config.globalProperties.uploadManager = new UploadManager(options.apolloClient, options.echoClient);
     }
 }

@@ -92,7 +92,6 @@ export class AuthenticationManager {
 
         axios.defaults.headers.common.Authorization = 'Bearer ' + token;
         this.#echoClient.connector.options.auth.headers.Authorization = "Bearer " + token;
-        this.#httpClient.options.headers.Authorization = "Bearer " + token;
     }
 
     // Removes the token to be used by the frontend

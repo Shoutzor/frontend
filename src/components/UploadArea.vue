@@ -1,5 +1,5 @@
 <template>
-    <form action="" class="upload-area" enctype="multipart/form-data" method="post">
+    <form class="upload-area" enctype="multipart/form-data" method="post">
         <div class="box_input">
             <b-icon-cloud-upload class="box_icon"></b-icon-cloud-upload>
 
@@ -20,6 +20,7 @@
                 <span class="box_dragndrop"> or drag it here</span>
             </label>
         </div>
+        <input type="submit" value="submit"/>
     </form>
 </template>
 
@@ -29,7 +30,8 @@ export default {
 
     data: () => ({
         dragTimer: null,
-        dragOver: false
+        dragOver: false,
+        test: null
     }),
 
     mounted() {
