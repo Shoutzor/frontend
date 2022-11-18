@@ -30,11 +30,12 @@ function uploadFetch(url, options = {}) {
         };
         
         xhr.onerror = () => {
-            reject(new TypeError('Network request failed'));
+            // It's impossible to catch CORS errors: https://stackoverflow.com/questions/4844643/is-it-possible-to-trap-cors-errors
+            reject(new Error('REQUEST_FAILED'));
         };
 
         xhr.ontimeout = () => {
-            reject(new TypeError('Network request timed out'));
+            reject(new Error('REQUEST_TIMEOUT'));
         };
 
         xhr.open(options.method, url, true);

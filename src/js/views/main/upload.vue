@@ -12,6 +12,7 @@
     </div>
     <div class="row row-cards">
         <div class="col-sm-12">
+            <h2 class="category-header">Upload processing queue</h2>
             <upload-table></upload-table>
         </div>
     </div>

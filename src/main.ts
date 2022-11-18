@@ -19,7 +19,7 @@ import { MediaPlayerPlugin } from "@js/plugins/MediaPlayer.js";
 import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
 import {UploadManagerPlugin} from "@js/plugins/UploadManager.js";
 import { DocumentNode } from 'graphql/language/ast';
-import { getOperationName } from "@apollo/client/utilities";
+import { getOperationName, Observable } from "@apollo/client/utilities";
 import { antiXSS } from '@js/plugins/SanitizationPlugin';
 
 // Predefine instances
@@ -64,26 +64,27 @@ fetch('/config.json')
     
     const authMiddleware = new ApolloLink((operation, forward) => {
         // add the authorization to the headers
-        operation.setContext(({ headers = {} }) => {
+        operation.setContext(() => {
             const token = app?.config?.globalProperties?.auth?.token;
             return {
                 headers: {
-                    ...headers,
+                    ...operation.getContext().headers,
                     authorization: (token) ? `Bearer ${token}` : null,
                 }
             }
         });
       
         return forward(operation);
-      })
+    })
 
       
     // Create the apollo client
     apolloClient = new ApolloClient({
-        link: concat(authMiddleware, ApolloLink.from([
+        link: ApolloLink.from([
+            authMiddleware,
             createLighthouseSubscriptionLink(echoClient),
             httpLink
-        ])),
+        ]),
         cache: new InMemoryCache(),
         connectToDevTools: config.APP_DEBUG,
         defaultOptions: {

@@ -20,7 +20,6 @@
                 <span class="box_dragndrop"> or drag it here</span>
             </label>
         </div>
-        <input type="submit" value="submit"/>
     </form>
 </template>
 

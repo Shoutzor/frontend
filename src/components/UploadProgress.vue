@@ -18,7 +18,7 @@
             </template>
             <template v-else>
                 <div>
-                    <p><strong>Status: </strong> No uploads pending</p>
+                    <p><strong>Status: </strong> No files to upload</p>
                 </div>
             </template>
         </div>

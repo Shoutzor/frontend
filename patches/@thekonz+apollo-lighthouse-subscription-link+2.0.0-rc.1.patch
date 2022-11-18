@@ -1,5 +1,5 @@
 diff --git a/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.es.js b/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.es.js
-index 6c3d23c..8f3230e 100644
+index 6c3d23c..996050b 100644
 --- a/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.es.js
 +++ b/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.es.js
 @@ -3,7 +3,10 @@ import { ApolloLink, Observable } from '@apollo/client/core';
@@ -14,8 +14,26 @@ index 6c3d23c..8f3230e 100644
      });
  }
  function unsubscribe(echoClient, getChannelName) {
+@@ -35,7 +38,16 @@ function createRequestHandler(echoClient) {
+     return function (operation, forward) {
+         var channelName;
+         return new Observable(function (observer) {
+-            forward(operation).subscribe(createSubscriptionHandler(echoClient, operation, observer, function (name) { return (channelName = name); }));
++            forward(operation).subscribe(
++                createSubscriptionHandler(
++                    echoClient, 
++                    operation, 
++                    observer, 
++                    function (name) { return (channelName = name); }
++                ),
++                // Patch for #23 - Catches network errors to be handled elsewhere
++                error => observer.error(error)
++            );
+             return function () { return unsubscribe(echoClient, function () { return channelName; }); };
+         });
+     };
 diff --git a/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.js b/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.js
-index 944b5c8..5742925 100644
+index 944b5c8..841cebe 100644
 --- a/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.js
 +++ b/node_modules/@thekonz/apollo-lighthouse-subscription-link/dist/index.js
 @@ -7,7 +7,10 @@ var core = require('@apollo/client/core');
@@ -30,3 +48,23 @@ index 944b5c8..5742925 100644
      });
  }
  function unsubscribe(echoClient, getChannelName) {
+@@ -39,7 +42,18 @@ function createRequestHandler(echoClient) {
+     return function (operation, forward) {
+         var channelName;
+         return new core.Observable(function (observer) {
+-            forward(operation).subscribe(createSubscriptionHandler(echoClient, operation, observer, function (name) { return (channelName = name); }));
++            forward(operation).subscribe(
++                createSubscriptionHandler(
++                    echoClient, 
++                    operation, 
++                    observer, 
++                    function (name) { 
++                        return (channelName = name); 
++                    }
++                ),
++                // Patch for #23 - Catches network errors to be handled elsewhere
++                error => observer.error(error)
++            );
+             return function () { return unsubscribe(echoClient, function () { return channelName; }); };
+         });
+     };
