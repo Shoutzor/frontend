@@ -38,7 +38,7 @@
 
 <script>
 import { useSubscription } from "@vue/apollo-composable";
-import { GET_UPLOADS_QUERY, UPLOAD_CREATED_SUBSCRIPTION, UPLOAD_UPDATED_SUBSCRIPTION } from "@graphql/uploads";
+import { GET_UPLOADS_QUERY, UPLOAD_CREATED_SUBSCRIPTION, UPLOAD_UPDATED_SUBSCRIPTION, UPLOAD_DELETED_SUBSCRIPTION } from "@graphql/uploads";
 import BaseTable from "@components/BaseTable.vue";
 import GraphqlPagination from "@components/GraphqlPagination.vue";
 import UploadStatusBadge from "@components/UploadStatusBadge.vue";
@@ -72,6 +72,10 @@ export default {
     },
     mounted() {
         useSubscription(UPLOAD_CREATED_SUBSCRIPTION).onResult(() => {
+            this.$refs.pagination.refresh();
+        })
+
+        useSubscription(UPLOAD_DELETED_SUBSCRIPTION).onResult(() => {
             this.$refs.pagination.refresh();
         })
     }
