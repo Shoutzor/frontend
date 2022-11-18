@@ -20,11 +20,11 @@
             <template v-slot>
                 <template v-if="props.itemsOnPage.length > 0">
                     <tr v-for="upload in props.itemsOnPage">
-                        <td>
+                        <td class="min" style="min-width: 400px;">
                             {{ upload.original_filename }}
                         </td>
                         <td>
-                            {{ upload.status }}
+                            <upload-status-badge :status="upload.status" />
                         </td>
                     </tr>
                 </template>
@@ -37,15 +37,18 @@
 </template>
 
 <script>
-import { GET_UPLOADS_QUERY, UPLOAD_UPDATED_SUBSCRIPTION } from "@graphql/uploads";
+import { useSubscription } from "@vue/apollo-composable";
+import { GET_UPLOADS_QUERY, UPLOAD_CREATED_SUBSCRIPTION, UPLOAD_UPDATED_SUBSCRIPTION } from "@graphql/uploads";
 import BaseTable from "@components/BaseTable.vue";
 import GraphqlPagination from "@components/GraphqlPagination.vue";
+import UploadStatusBadge from "@components/UploadStatusBadge.vue";
 
 export default {
     name: "upload-table",
     components: {
         BaseTable,
-        GraphqlPagination
+        GraphqlPagination,
+        UploadStatusBadge
     },
     data() {
         return {
@@ -66,6 +69,11 @@ export default {
                 }
             }
         }
+    },
+    mounted() {
+        useSubscription(UPLOAD_CREATED_SUBSCRIPTION).onResult(() => {
+            this.$refs.pagination.refresh();
+        })
     }
 }
 </script>

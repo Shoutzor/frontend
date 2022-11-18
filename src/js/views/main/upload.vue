@@ -13,6 +13,7 @@
     <div class="row row-cards">
         <div class="col-sm-12">
             <h2 class="category-header">Upload processing queue</h2>
+            <p>Files that have been succesfully uploaded and not yet processed will be shown here</p>
             <upload-table></upload-table>
         </div>
     </div>

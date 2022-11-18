@@ -185,8 +185,6 @@ fetch('/config.json')
     .use(RequestManagerPlugin)
     .use(BootstrapIconsPlugin)
     .mount('#shoutzor');
-
-    console.dir(app);
 })
 .catch(error => {
     console.error("An error occured while initializing", error);
