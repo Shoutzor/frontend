@@ -15,6 +15,7 @@ export const GET_UPLOADS_QUERY = gql`
             }
             data {
                 id
+                original_filename
                 filename
                 uploaded_at
                 uploaded_by {
@@ -29,6 +30,7 @@ export const UPLOAD_MUTATION = gql`
     mutation upload($file: FileUpload!) {
         upload(file: $file) {
             id
+            original_filename
             filename
             status
         }

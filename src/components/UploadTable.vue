@@ -21,7 +21,7 @@
                 <template v-if="props.itemsOnPage.length > 0">
                     <tr v-for="upload in props.itemsOnPage">
                         <td>
-                            {{ upload.filename }}
+                            {{ upload.original_filename }}
                         </td>
                         <td>
                             {{ upload.status }}

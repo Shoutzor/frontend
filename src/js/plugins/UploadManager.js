@@ -6,14 +6,12 @@ export class UploadManager {
 
     #app
     #apolloClient
-    #echoClient
 
     #state
 
-    constructor(app, apolloClient, echoClient) {
+    constructor(app, apolloClient) {
         this.#app = app;
         this.#apolloClient = apolloClient;
-        this.#echoClient = echoClient;
 
         this.#state = reactive({
             isUploading: false,
@@ -98,17 +96,10 @@ export class UploadManager {
                 }
             }
         })
-        .then(({data}) => {
-            console.log("upload response: ", data.upload);
-            //On success?
-            //this.message = response.data.message;
-        })
         .catch((error) => {
-            console.dir({error});
             this.#showError(this.parseError(error).message);
         })
         .finally(() => {
-            console.log("finally called");
             //Update status variables
             this.#state.progress = 0;
             this.#state.currentFile = null;
@@ -164,6 +155,6 @@ export class UploadManager {
 
 export const UploadManagerPlugin = {
     install: (app, options) => {
-        app.config.globalProperties.uploadManager = new UploadManager(app, options.apolloClient, options.echoClient);
+        app.config.globalProperties.uploadManager = new UploadManager(app, options.apolloClient);
     }
 }

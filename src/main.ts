@@ -180,8 +180,7 @@ fetch('/config.json')
         echoClient
     })
     .use(UploadManagerPlugin, {
-        apolloClient,
-        echoClient
+        apolloClient
     })
     .use(RequestManagerPlugin)
     .use(BootstrapIconsPlugin)
