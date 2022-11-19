@@ -14,7 +14,7 @@
         <div class="col-sm-12">
             <h2 class="category-header">Upload processing queue</h2>
             <p>Files that have been succesfully uploaded and not yet processed will be shown here</p>
-            <upload-table></upload-table>
+            <upload-table class="card p-2"></upload-table>
         </div>
     </div>
 </template>

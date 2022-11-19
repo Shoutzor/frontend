@@ -96,6 +96,7 @@ export default {
 
         return {
             classes: computed(() => ({
+                'mb-0': true,
                 'pagination': true,
                 'pagination-sm': props.size === 'small',
                 'pagination-lg': props.size === 'large',
