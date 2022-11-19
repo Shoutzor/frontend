@@ -1,8 +1,9 @@
-import axios from 'axios';
-import {reactive, triggerRef} from "vue";
+import { reactive } from "vue";
+import { useSubscription } from "@vue/apollo-composable";
 
 import {
-    ALL_SETTINGS_QUERY
+    ALL_SETTINGS_QUERY,
+    SETTING_UPDATED_SUBSCRIPTION
 } from "@graphql/settings";
 
 export class SettingsManager {
@@ -35,26 +36,29 @@ export class SettingsManager {
     }
 
     get emailVerificationEnabled() {
-        return this.#processValue(this.getSetting('user_must_verify_email').value);
+        return this.getSettingValue('user_must_verify_email');
     }
 
-    #processValue(input) {
-        if(input === 'true') {
-            return true;
-        }
-        else if(input === 'false') {
-            return false;
-        }
-
-        return input;
-    }
-    
     getSetting(key) {
         if(!key in this.#state.settings) {
             return null;
         }
 
         return this.#state.settings[key];
+    }
+
+    getSettingValue(key) {
+        return this.getCastedSettingValue(this.getSetting(key).value);
+    }
+
+    getCastedSettingValue(value) {
+        return JSON.parse(value).data;
+    }
+
+    createSettingValue(input) {
+        return JSON.stringify({
+            data: input
+        });
     }
 
     async #initialize() {
@@ -72,6 +76,7 @@ export class SettingsManager {
 
                 this.#state.settings = settings;
                 this.#state.isInitialized = true;
+                this.#listenToSettingChanges();
                 resolve(true);
             })
             .catch((error) => {
@@ -82,6 +87,19 @@ export class SettingsManager {
         });
     }
 
+    /**
+     * Listens for changes and updates the changed setting's value accordingly
+     */
+    #listenToSettingChanges() {
+        console.log("listening to changes");
+
+        useSubscription(SETTING_UPDATED_SUBSCRIPTION).onResult(({ data }) => {
+            const updatedSetting = data.settingUpdated;
+            let newSetting = Object.assign({}, this.#state.settings[updatedSetting.key]);
+            newSetting.value = updatedSetting.value;
+            this.#state.settings[updatedSetting.key] = newSetting;
+        });
+    }
 }
 
 export const SettingsPlugin = {

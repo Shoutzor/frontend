@@ -101,7 +101,6 @@ export class AuthenticationManager {
 
         delete axios.defaults.headers.common.Authorization;
         delete this.#echoClient.connector.options.auth.headers.authorization;
-        delete this.#httpClient.options.headers.authorization;
     }
 
     async #initialize() {
