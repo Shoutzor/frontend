@@ -18,7 +18,7 @@
 
             <template #default>
                 <template v-if="props.isLoading">
-                    <tr class="placeholder-glow" v-for="n in 3">
+                    <tr class="placeholder-glow">
                         <td class="text-center mediatype-column">
                             <span class="avatar mediatype placeholder"></span>
                         </td>
