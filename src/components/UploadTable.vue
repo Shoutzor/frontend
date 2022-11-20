@@ -29,7 +29,7 @@
                     </tr>
                 </template>
                 <tr v-else>
-                    <td colspan="2">There are no uploads awaiting processing (completed uploads are not shown here)</td>
+                    <td colspan="2">There are no uploads awaiting processing (completed or rejected uploads are not shown here)</td>
                 </tr>
             </template>
         </base-table>

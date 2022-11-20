@@ -1,6 +1,6 @@
-import { useMutation } from '@vue/apollo-composable';
 import { reactive } from 'vue';
 import { UPLOAD_MUTATION } from '@js/graphql/uploads';
+import { formatTime } from '@js/helpers/timeHelper';
 
 export class UploadManager {
 
@@ -9,10 +9,13 @@ export class UploadManager {
 
     #state
 
+    #fileReader
+ 
     constructor(app, apolloClient) {
         this.#app = app;
         this.#apolloClient = apolloClient;
-
+        this.#fileReader = new FileReader();
+        
         this.#state = reactive({
             isUploading: false,
             progress: 0,
@@ -41,11 +44,27 @@ export class UploadManager {
         return this.files.length;
     }
 
+    get validExtensions() {
+        return this.#app.config.globalProperties.settings.getSettingValue('upload_allowed_extensions');
+    }
+
+    get maxFileSize() {
+        return this.#app.config.globalProperties.settings.getSettingValue('upload_max_size');
+    }
+
+    get minDuration() {
+        return this.#app.config.globalProperties.settings.getSettingValue('upload_min_duration');
+    }
+
+    get maxDuration() {
+        return this.#app.config.globalProperties.settings.getSettingValue('upload_max_duration');
+    }
+
     #showError(message) {
         this.#app.config.globalProperties.bootstrapControl.showToast("danger", message);
     }
 
-    uploadFiles(addedFiles) {
+    async uploadFiles(addedFiles) {
         //Check if there's anything to upload
         if (addedFiles.length === 0) {
             return;
@@ -55,10 +74,46 @@ export class UploadManager {
         // Required because addedFiles isn't actually an array, but a FileList object
         for (let i = 0; i < addedFiles.length; i++) {
             let file = addedFiles.item(i);
+
+            // Check if the file has an allowed extension
+            if(!this.isValidExtension(this.getFileExtension(file.name))) {
+                this.#showError(`"${file.name}" does not have an allowed file-extension`);
+                continue;
+            }
+
+            // Check if any duration requirements have been set
+            if(this.minDuration > 0 || this.maxDuration > 0) {
+                // Wrap in try/catch as this might not be supported by all browsers
+                try {
+                    const d = await this.getDuration(file);
+                
+                    // Check if the duration is shorter then the minimum
+                    if(d < this.minDuration) {
+                        this.#showError(`"${file.name}" has a duration of ${formatTime(d)} which is less then the required minimum ${formatTime(this.minDuration)}`);
+                        continue;
+                    }
+
+                    // Check if the duration is longer then the maximum
+                    if(d > this.maxDuration) {
+                        this.#showError(`"${file.name}" has a duration of ${formatTime(d)} which is larger then the maximum allowed ${formatTime(this.maxDuration)}`);
+                        continue;
+                    }
+                }
+                catch (e) {
+                    // If any errors occured, ignore this client-side validation check.
+                    // The only downside is that the file will be uploaded & processed before getting rejected by the server.
+                }
+            }
+
             this.#state.files.push(file);
         }
 
-        //Check if we're already uploading a file
+        // Check if any files passed the validation
+        if(this.files.length === 0) {
+            return;
+        }
+
+        // Check if we're already uploading a file
         if (this.isUploading === true) {
             return;
         }
@@ -71,8 +126,8 @@ export class UploadManager {
         // Grab the first file from the stack
         let currentFile = this.#state.files.shift();
 
-        // TODO check if file is a valid media format
-        // These extensions should be dynamically fetched / updated (echo-subscription?)
+        // Check if the file has an allowed extension
+
 
         // Set uploading status to true
         this.#state.isUploading = true;
@@ -139,7 +194,7 @@ export class UploadManager {
         // CORS error would return a status code of 0 with nothing to indicate it being a CORS issue, see:
         // https://stackoverflow.com/questions/4844643/is-it-possible-to-trap-cors-errors
         else if(error?.message === 'REQUEST_FAILED') {
-            return { message: "The upload failed due to an unknown reason" };
+            return { message: "The upload failed due to an unknown reason (maybe too big?)" };
         }
 
         //Unknown error
@@ -148,8 +203,32 @@ export class UploadManager {
         };
     }
 
+    async getDuration(file) {
+        return new Promise((resolve, reject) => {
+            this.#fileReader.onload = () => {
+                const media = new Audio(this.#fileReader.result);
+                media.onloadedmetadata = () => resolve(media.duration);
+            }
+            
+            this.#fileReader.onerror = (error) => {
+                reject(error);
+            }
+
+            this.#fileReader.readAsDataURL(file);
+        });
+    }
+
     #calculateProgress(loaded, total) {
         return Math.floor((loaded / total) * 100);
+    }
+
+    getFileExtension(filename) {
+        // Credits: https://stackoverflow.com/a/12900504/1024322
+        return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+    }
+
+    isValidExtension(extension) {
+        return this.validExtensions.indexOf(extension) >= 0;
     }
 }
 

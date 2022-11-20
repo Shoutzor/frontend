@@ -16,8 +16,26 @@
                 <span class="box_dragndrop">Drop your file here</span>
             </label>
             <label v-else for="file">
-                <span class="action">Choose a file</span>
+                <span class="action">Select a file</span>
                 <span class="box_dragndrop"> or drag it here</span>
+                <span class="requirements">Allowed extensions: {{ allowedExtensions }}</span>
+                <span 
+                    v-if="maxFilesize > 0"
+                    class="filesize">Files must be smaller then {{ maxFilesize }}MB</span>
+
+                <span 
+                    v-if="minDuration > 0 && maxDuration > 0"
+                    class="duration">
+                    Duration must be between {{ formatTime(minDuration) }} - {{ formatTime(maxDuration) }}
+                </span>
+                <span v-else-if="minDuration > 0"
+                    class="duration">
+                    Duration must be longer then {{ formatTime(minDuration) }}
+                </span>
+                <span v-else-if="maxDuration > 0"
+                    class="duration">
+                    Duration must be shorter then {{ formatTime(maxDuration) }}
+                </span>
             </label>
         </div>
     </form>
@@ -44,7 +62,20 @@ export default {
         document.querySelector('body').removeEventListener('dragleave', this.onDragLeave);
         document.querySelector('.upload-area').removeEventListener('drop', this.onDrop);
     },
-
+    computed: {
+        allowedExtensions() {
+            return this.uploadManager.validExtensions.join(', ');
+        },
+        maxFilesize() {
+            return this.uploadManager.maxFileSize;
+        },
+        minDuration() {
+            return this.uploadManager.minDuration;
+        },
+        maxDuration() {
+            return this.uploadManager.maxDuration;
+        }
+    },
     methods: {
         onDragOver(e) {
             e.preventDefault();
@@ -138,6 +169,11 @@ export default {
 
             .box_dragndrop {
                 display: inline;
+            }
+
+            .requirements, .filesize, .duration {
+                display: block;
+                font-size:14px;
             }
         }
     }
