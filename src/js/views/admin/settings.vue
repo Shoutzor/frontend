@@ -47,7 +47,7 @@
                                 :modelValue="getSettingValue(setting.value)"
                                 type="number"
                                 class="mb-3"
-                                @input="saveInputData"
+                                @change="saveInputData"
                                 />
 
                             <formitem-list
@@ -153,7 +153,8 @@ export default {
             });
         },
         async saveInputData(e) {
-            console.log(e.target.value);
+            const setting = e.target;
+            this.updateSetting(setting.id, parseInt(setting.value));
         },
         updateSetting(key, value) {
             return new Promise((resolve, reject) => {
