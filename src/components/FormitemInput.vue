@@ -1,6 +1,7 @@
 <template>
     <div class="form-group">
-        <label v-if="showLabel" class="form-label">{{ name }}</label>
+        <label v-if="showLabel" class="form-label mb-0">{{ name }}</label>
+        <div v-if="description !== ''" class="form-text mt-0 mb-2">{{ description }}</div>
         <div>
             <base-input
                 v-model="value"
@@ -54,7 +55,7 @@ export default {
             default: ''
         },
         modelValue: {
-            type: String,
+            type: [ String, Number ],
             required: true
         },
         disabled: {

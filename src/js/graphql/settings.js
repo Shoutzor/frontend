@@ -8,6 +8,8 @@ export const GET_SETTING_QUERY = gql`
             type
             name
             description
+            group
+            order
             readonly
         }
     }`;
@@ -20,6 +22,8 @@ export const ALL_SETTINGS_QUERY = gql`
             type
             name
             description
+            group
+            order
             readonly
         }
     }`;
@@ -32,6 +36,8 @@ export const ALL_NON_READONLY_SETTINGS_QUERY = gql`
             type
             name
             description
+            group
+            order
             readonly
         }
     }`;

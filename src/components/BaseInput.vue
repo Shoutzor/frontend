@@ -27,7 +27,7 @@ export default {
             required: false,
             default: 'text',
             validator: function (value) {
-                return ['text', 'password', 'email'].indexOf(value) !== -1;
+                return ['text', 'password', 'email', 'number'].indexOf(value) !== -1;
             }
         },
         name: {
@@ -35,7 +35,7 @@ export default {
             required: false
         },
         modelValue: {
-            type: String,
+            type: [String, Number],
             required: false
         },
         placeholder: {

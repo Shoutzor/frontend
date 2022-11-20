@@ -8,7 +8,7 @@ import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
 import {ApolloClient, ApolloLink, HttpLink, InMemoryCache, concat } from '@apollo/client/core'
 import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subscription-link";
 import { createUploadLink } from 'apollo-upload-client';
-import CustomFetch from '@js/plugins/ApolloUploadCustomFetch.js';
+import CustomFetch from '@js/helpers/ApolloUploadCustomFetch.js';
 import router from "@js/router";
 import App from "@js/views/App.vue";
 import { MessageBagParserPlugin } from "@js/plugins/MessageBagParser.js"
