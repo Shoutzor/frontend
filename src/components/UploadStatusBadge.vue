@@ -38,8 +38,8 @@ export default {
 
                     //FAILED_RETRY = Processing failed, will try again
                     //FAILED_FINAL = Processing failed, retries exhausted
+                    case 2:
                     case 3:
-                    case 4:
                         return 'danger';
 
                     default:
@@ -58,10 +58,10 @@ export default {
 
                     //FAILED_RETRY = Processing failed, will try again
                     //FAILED_FINAL = Processing failed, retries exhausted
-                    case 3:
+                    case 2:
                         return 'Failed, will retry';
 
-                    case 4:
+                    case 3:
                         return 'Failed, retries exhausted';
 
                     default:
