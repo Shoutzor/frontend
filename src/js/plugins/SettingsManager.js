@@ -91,8 +91,6 @@ export class SettingsManager {
      * Listens for changes and updates the changed setting's value accordingly
      */
     #listenToSettingChanges() {
-        console.log("listening to changes");
-
         useSubscription(SETTING_UPDATED_SUBSCRIPTION).onResult(({ data }) => {
             const updatedSetting = data.settingUpdated;
             let newSetting = Object.assign({}, this.#state.settings[updatedSetting.key]);
