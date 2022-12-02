@@ -8,6 +8,7 @@ import Artist from "@js/views/main/artist.vue";
 import Album from "@js/views/main/album.vue";
 import Search from "@js/views/main/search.vue";
 import Register from "@js/views/main/register.vue";
+import Profile from "@js/views/main/profile.vue";
 
 import AdminDashboard from "@js/views/admin/dashboard.vue";
 import AdminUserList from "@js/views/admin/user/list.vue";
@@ -74,14 +75,6 @@ const routes = [
             component: Search,
             meta: {
                 requiresPermission: "website.search"
-            }
-        }, {
-            name: 'profile',
-            path: '/profile',
-            component: Dashboard,
-            meta: {
-                requiresPermission: "website.profile",
-                requiresAuth: true
             }
         }, {
             name: 'register',

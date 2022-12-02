@@ -22,10 +22,6 @@
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-dark dropdown-menu-right user-dropdown">
-                                <router-link :to="{name: 'profile'}" class="dropdown-item">
-                                    Profile
-                                </router-link>
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" @click.prevent="logout">Logout</a>
                             </div>
                         </li>
