@@ -44,7 +44,7 @@
         "@vue/compiler-sfc": "^3.2.40",
         "autoprefixer": "^10.4.7",
         "babel-loader": "^8.2.5",
-        "css-loader": "^6.7.1",
+        "css-loader": "^6.7.2",
         "file-loader": "^6.2.0",
         "patch-package": "^6.4.7",
         "postcss": "^8.4.14",
