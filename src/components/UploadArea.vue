@@ -113,7 +113,6 @@ export default {
         onFileSelect(e) {
             if (e.target.files !== undefined) {
                 this.uploadManager.uploadFiles(e.target.files);
-                e.target.value = null;
             }
         }
     }

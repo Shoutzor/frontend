@@ -123,14 +123,12 @@ export class UploadManager {
     }
 
     uploadNextFile() {
+        // Set uploading status to true
+        this.#state.isUploading = true;
+
         // Grab the first file from the stack
         let currentFile = this.#state.files.shift();
 
-        // Check if the file has an allowed extension
-
-
-        // Set uploading status to true
-        this.#state.isUploading = true;
         this.#state.currentFile = currentFile.name;
 
         let formData = new FormData();
@@ -152,6 +150,7 @@ export class UploadManager {
             }
         })
         .catch((error) => {
+            console.log(error);
             this.#showError(this.parseError(error).message);
         })
         .finally(() => {
