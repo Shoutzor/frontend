@@ -73,7 +73,8 @@
 </template>
 
 <script>
-import {COMINGUP_QUERY, REQUESTADDED_SUBSCRIPTION} from "@graphql/requests";
+import { useSubscription } from "@vue/apollo-composable";
+import {COMINGUP_QUERY, REQUESTADDED_SUBSCRIPTION, REQUESTPLAYED_SUBSCRIPTION} from "@graphql/requests";
 import ArtistList from "@components/ArtistList.vue";
 import BaseTable from "@components/BaseTable.vue";
 import BeautifiedTime from "@components/BeautifiedTime.vue";
@@ -94,6 +95,11 @@ export default {
             COMINGUP_QUERY,
             REQUESTADDED_SUBSCRIPTION
         };
+    },
+    mounted() {
+        useSubscription(REQUESTPLAYED_SUBSCRIPTION).onResult(() => {
+            this.$refs.pagination.refresh();
+        })
     }
 }
 </script>

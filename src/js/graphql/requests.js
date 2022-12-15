@@ -33,7 +33,8 @@ export const COMINGUP_QUERY = gql`
         requests(
             page: $page,
             first: $limit,
-            where: { column: PLAYED_AT, operator: IS_NULL }
+            where: { column: PLAYED_AT, operator: IS_NULL },
+            orderBy: { column: "REQUESTED_AT", order: ASC }
         ) {
             paginatorInfo{
                 total
