@@ -12,7 +12,7 @@ export const SEARCH_QUERY = gql`
                     id
                     name
                 }
-                album {
+                albums {
                     title
                 }
             }

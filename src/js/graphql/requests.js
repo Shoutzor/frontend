@@ -78,10 +78,6 @@ export const HISTORY_QUERY = gql`
                     title
                     is_video
                     duration
-                    album {
-                        id
-                        title
-                    }
                     artists {
                         id,
                         name

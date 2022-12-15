@@ -1,6 +1,6 @@
 import {reactive} from "vue";
-import {provideApolloClient, useQuery} from "@vue/apollo-composable";
-import { LASTPLAYED_QUERY } from "@graphql/requests";
+import {provideApolloClient, useQuery, useSubscription } from "@vue/apollo-composable";
+import { LASTPLAYED_QUERY, REQUESTPLAYED_SUBSCRIPTION } from "@graphql/requests";
 import dashjs from 'dashjs';
 import {PlayerState} from "@models/PlayerState";
 
@@ -73,10 +73,6 @@ export class MediaPlayer {
     }
 
     #listenForEvents() {
-        this.#echoClient.channel('shoutzor').listen('LastPlayedUpdated', () => {
-            this.#onLastPlayedUpdate();
-        });
-
         //DashJS Player: Loading
         this.#player.on(dashjs.MediaPlayer.events["STREAM_INITIALIZING"], () => this.#updatePlayerState(PlayerState.LOADING));
         this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_WAITING"], () => this.#updatePlayerState(PlayerState.LOADING));
@@ -93,7 +89,7 @@ export class MediaPlayer {
     }
 
     #onLastPlayedUpdate() {
-        const { loading, onResult } = useQuery(LASTPLAYED_QUERY, {
+        const { loading, refetch, onResult } = useQuery(LASTPLAYED_QUERY, {
             fetchPolicy: 'cache-and-network'
         });
 
@@ -101,6 +97,12 @@ export class MediaPlayer {
 
         onResult(result => {
             this.#updateLastPlayed(result.data.requests.data[0]);
+        });
+
+        // Refetch when a request has been played
+        useSubscription(REQUESTPLAYED_SUBSCRIPTION).onResult(() => {
+            console.log("request played called");
+            refetch();
         });
     }
 
