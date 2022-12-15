@@ -123,7 +123,6 @@ export class MediaPlayer {
 
         // Refetch when a request has been played
         useSubscription(REQUESTPLAYED_SUBSCRIPTION).onResult(() => {
-            console.log("request played called");
             refetch();
         });
     }
