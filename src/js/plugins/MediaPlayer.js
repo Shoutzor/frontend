@@ -1,7 +1,7 @@
 import {reactive} from "vue";
 import {provideApolloClient, useQuery, useSubscription } from "@vue/apollo-composable";
 import { LASTPLAYED_QUERY, REQUESTPLAYED_SUBSCRIPTION } from "@graphql/requests";
-import dashjs from 'dashjs';
+import IcecastMetadataPlayer from "icecast-metadata-player";
 import {PlayerState} from "@models/PlayerState";
 
 export class MediaPlayer {
@@ -82,32 +82,24 @@ export class MediaPlayer {
             return;
         }
 
-        this.#player = dashjs.MediaPlayer().create();
-        this.#player.initialize(document.querySelector("#mediaPlayerSource"), null, false);
-
-        // Start listening for events
-        this.#listenForEvents();
+        this.#player = new IcecastMetadataPlayer(this.#broadcastUrl, {
+            retryTimeout: 0,
+            metadataTypes: [],
+            onLoad: () => {
+                this.#updatePlayerState(PlayerState.LOADING);
+            },
+            onPlay: () => {
+                this.#updatePlayerState(PlayerState.PLAYING);
+            },
+            onStop: () => {
+                this.#updateLastPlayed(PlayerState.STOPPED);
+            }
+        });
 
         // Fetch initial data
         this.#onLastPlayedUpdate();
 
         this.#initialized = true;
-    }
-
-    #listenForEvents() {
-        //DashJS Player: Loading
-        this.#player.on(dashjs.MediaPlayer.events["STREAM_INITIALIZING"], () => this.#updatePlayerState(PlayerState.LOADING));
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_WAITING"], () => this.#updatePlayerState(PlayerState.LOADING));
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_STALLED"], () => this.#updatePlayerState(PlayerState.LOADING));
-
-        //DashJS Player: Playing
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_PLAYING"], () => this.#updatePlayerState(PlayerState.PLAYING));
-
-        //DashJS Player: Stopped
-        this.#player.on(dashjs.MediaPlayer.events["ERROR"], () => this.#updatePlayerState(PlayerState.STOPPED));
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_ERROR"], () => this.#updatePlayerState(PlayerState.STOPPED));
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_ENDED"], () => this.#updatePlayerState(PlayerState.STOPPED));
-        this.#player.on(dashjs.MediaPlayer.events["PLAYBACK_PAUSED"], () => this.#updatePlayerState(PlayerState.STOPPED));
     }
 
     #onLastPlayedUpdate() {
@@ -128,20 +120,15 @@ export class MediaPlayer {
     }
 
     play() {
-        this.#player.attachSource(this.#broadcastUrl);
         this.#player.play();
     }
 
     stop() {
-        this.#player.pause();
-        this.#player.attachSource(null);
-
-        //TODO figure out why this is needed. Event should work on its own.
-        this.#updatePlayerState(PlayerState.STOPPED);
+        this.#player.stop();
     }
 
     setVolume(volume) {
-        this.#player.setVolume(volume);
+        this.#player.audioElement.volume = volume;
     }
 }
 
