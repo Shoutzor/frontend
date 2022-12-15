@@ -5,7 +5,7 @@ import Pusher from 'pusher-js';
 import { createApp } from 'vue'
 import {BootstrapIconsPlugin} from 'bootstrap-icons-vue';
 import {DefaultApolloClient, provideApolloClient} from '@vue/apollo-composable'
-import {ApolloClient, ApolloLink, HttpLink, InMemoryCache, concat } from '@apollo/client/core'
+import {ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client/core'
 import {createLighthouseSubscriptionLink} from "@thekonz/apollo-lighthouse-subscription-link";
 import { createUploadLink } from 'apollo-upload-client';
 import CustomFetch from '@js/helpers/ApolloUploadCustomFetch.js';
@@ -20,7 +20,7 @@ import { MediaPlayerPlugin } from "@js/plugins/MediaPlayer.js";
 import { BootstrapControlPlugin } from "@js/plugins/BootstrapControl.js";
 import {UploadManagerPlugin} from "@js/plugins/UploadManager.js";
 import { DocumentNode } from 'graphql/language/ast';
-import { getOperationName, Observable } from "@apollo/client/utilities";
+import { getOperationName } from "@apollo/client/utilities";
 import { antiXSS } from '@js/plugins/SanitizationPlugin';
 
 // Predefine instances
@@ -147,8 +147,7 @@ fetch('/config.json')
     .use(router(app.config.globalProperties.auth))
     .use(MediaPlayerPlugin, {
         broadcastUrl: config.BROADCAST_URL,
-        apolloClient,
-        echoClient
+        apolloClient
     })
     .use(UploadManagerPlugin, {
         apolloClient

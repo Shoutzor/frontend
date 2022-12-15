@@ -9,7 +9,12 @@
                 <span v-if="isLoading" class="track-title">Loading..</span>
                 <template v-else-if="nowplaying">
                     <span class="track-title">{{ nowplaying.media.title }}</span>
-                    <artist-list :artists="nowplaying.media.artists" class="text-muted"/>
+                    <template v-if="nowplaying.media.artists.length > 0">
+                        <artist-list :artists="nowplaying.media.artists" class="text-muted"/>
+                    </template>
+                    <template v-else>
+                        <div class="text-muted artist">Unknown Artist</div>
+                    </template>
                 </template>
                 <span v-else class="track-title">Now playing: Unavailable</span>
             </div>
@@ -17,11 +22,18 @@
         <div
             class="media-control-container d-flex flex-fill flex-column flex-wrap align-items-center order-0 order-md-1 pt-1">
             <div class="media-controls d-flex flex-fill align-items-center justify-content-center">
-                <b-icon-hand-thumbs-up v-if="isAuthenticated && votingEnabled && nowplaying" @click="onUpvoteClick"
-                                       class="upvote me-3"/>
-                <play-button @click="onPlayClick" :state="playerStatus" class="mt-1"></play-button>
-                <b-icon-hand-thumbs-down v-if="isAuthenticated && votingEnabled && nowplaying"
-                                         @click="onDownvoteClick" class="downvote ms-3"/>
+                <b-icon-hand-thumbs-up 
+                    v-if="isAuthenticated && votingEnabled && nowplaying" 
+                    @click="onUpvoteClick"
+                    class="upvote me-3" />
+                <play-button 
+                    @click="onPlayClick" 
+                    :state="playerStatus" 
+                    class="mt-1"></play-button>
+                <b-icon-hand-thumbs-down 
+                    v-if="isAuthenticated && votingEnabled && nowplaying"
+                    @click="onDownvoteClick" 
+                    class="downvote ms-3" />
             </div>
 
             <base-progressbar

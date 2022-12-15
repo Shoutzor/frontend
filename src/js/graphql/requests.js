@@ -9,6 +9,7 @@ export const LASTPLAYED_QUERY = gql`
         ) {
             data {
                 id
+                played_at
                 requested_by {
                     id
                     username

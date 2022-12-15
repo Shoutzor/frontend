@@ -9,16 +9,16 @@ export class MediaPlayer {
     #initialized
 
     #broadcastUrl
-    #echoClient
     #state
+    #positionUpdater
 
     #player
 
-    constructor(broadcastUrl, echoClient) {
+    constructor(broadcastUrl) {
         this.#initialized = false;
 
         this.#broadcastUrl = broadcastUrl;
-        this.#echoClient = echoClient;
+        this.#positionUpdater = null;
         this.#state = reactive({
             lastPlayed: null,
             lastPlayedLoading: true,
@@ -45,6 +45,28 @@ export class MediaPlayer {
 
     #updateLastPlayed(request) {
         this.#state.lastPlayed = request;
+
+        if(this.#positionUpdater) {
+            clearInterval(this.#positionUpdater);
+            this.#updateTrackPosition(0);
+        }
+
+        if(this.#state.lastPlayed?.played_at) {
+            // Laravel (the backend) is configured to set all timestamp strings to UTC format
+            let played_at = Date.parse(this.#state.lastPlayed.played_at + ' UTC') / 1000;
+            let duration = this.#state.lastPlayed.media.duration;
+
+            this.#positionUpdater = setInterval(() => {
+                let current = new Date().getTime() / 1000;
+                let position = current - played_at;
+
+                if(position > duration) {
+                    position = duration;
+                }
+
+                this.#updateTrackPosition(position);
+            }, 1000);
+        }
     }
 
     get trackPosition() {
@@ -128,6 +150,6 @@ export const MediaPlayerPlugin = {
     install: (app, options) => {
         provideApolloClient(options.apolloClient);
 
-        app.config.globalProperties.mediaPlayer = new MediaPlayer(options.broadcastUrl, options.echoClient);
+        app.config.globalProperties.mediaPlayer = new MediaPlayer(options.broadcastUrl);
     }
 }
