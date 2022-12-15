@@ -6,7 +6,8 @@
                 <img class="rounded" :src="nowplaying?.media?.image || defaultMediaImage" alt="media image"/>
             </div>
             <div class="track-info d-inline-block">
-                <template v-if="nowplaying">
+                <span v-if="isLoading" class="track-title">Loading..</span>
+                <template v-else-if="nowplaying">
                     <span class="track-title">{{ nowplaying.media.title }}</span>
                     <artist-list :artists="nowplaying.media.artists" class="text-muted"/>
                 </template>
@@ -86,6 +87,7 @@ export default {
         this.mediaPlayer.initialize();
     },
     computed: {
+        isLoading() { return this.mediaPlayer.lastPlayedLoading; },
         isAuthenticated() { return this.auth.isAuthenticated; },
         playerStatus() { return this.mediaPlayer.playerStatus; },
         videoEnabled() { return false; },

@@ -1,20 +1,24 @@
 <template>
     <information-header :image="request?.media?.image || defaultMediaImage" class="nowplaying">
-            <template v-if="request">
-                <h3>{{ request.media.title }}</h3>
-                <artist-list :artists="request.media.artists"></artist-list>
+        <template v-if="isLoading">
+            <p class="placeholder placeholder-wave placeholder-lg col-8"></p>
+            <span class="placeholder placeholder-wave placeholder-sm col-5"></span>
+        </template>
+        <template v-else-if="request">
+            <h3>{{ request.media.title }}</h3>
+            <artist-list :artists="request.media.artists"></artist-list>
 
-                <div class="d-flex align-items-center mt-auto">
-                    <div class="requested-by pl-3">
-                        <small class="text-muted me-1">Requested by</small>
-                        <template v-if="request.requested_by">{{ request.requested_by.username }}</template>
-                        <template v-else>AutoDJ</template>
-                    </div>
+            <div class="d-flex align-items-center mt-auto">
+                <div class="requested-by pl-3">
+                    <small class="text-muted me-1">Requested by</small>
+                    <template v-if="request.requested_by">{{ request.requested_by.username }}</template>
+                    <template v-else>AutoDJ</template>
                 </div>
-            </template>
-            <template v-else>
-                <p class="placeholder placeholder-wave placeholder-lg col-8"></p>
-                <span class="placeholder placeholder-wave placeholder-sm col-5"></span>
+            </div>
+        </template>
+        <template v-else>
+            <h3>Information Unavailable</h3>
+            <span>Failed to load information</span>
         </template>
     </information-header>
 </template>
@@ -39,7 +43,12 @@ export default {
         }
     },
     computed: {
-        request() { return this.mediaPlayer.lastPlayed; }
+        request() { 
+            return this.mediaPlayer.lastPlayed; 
+        },
+        isLoading() {
+            return this.mediaPlayer.lastPlayedLoading;
+        }
     }
 }
 </script>

@@ -21,6 +21,7 @@ export class MediaPlayer {
         this.#echoClient = echoClient;
         this.#state = reactive({
             lastPlayed: null,
+            lastPlayedLoading: true,
             playerStatus: PlayerState.STOPPED,
             trackPosition: 0
         });
@@ -36,6 +37,10 @@ export class MediaPlayer {
 
     get lastPlayed() {
         return this.#state.lastPlayed;
+    }
+
+    get lastPlayedLoading() {
+        return this.#state.lastPlayedLoading;
     }
 
     #updateLastPlayed(request) {
@@ -88,9 +93,11 @@ export class MediaPlayer {
     }
 
     #onLastPlayedUpdate() {
-        const { onResult } = useQuery(LASTPLAYED_QUERY, {
+        const { loading, onResult } = useQuery(LASTPLAYED_QUERY, {
             fetchPolicy: 'cache-and-network'
         });
+
+        this.#state.lastPlayedLoading = loading;
 
         onResult(result => {
             this.#updateLastPlayed(result.data.requests.data[0]);
