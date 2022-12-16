@@ -12,6 +12,6 @@ services:
       - APP_URL
       - BROADCAST_URL
       - PUSHER_APP_KEY
-      - PUSHER_SOCKET_HOST
+      - PUSHER_HOST
       - PUSHER_PORT
       - PUSHER_SCHEME
