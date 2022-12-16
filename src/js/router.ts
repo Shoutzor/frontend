@@ -206,7 +206,7 @@ export default function (authManager : AuthenticationManager) {
             }
 
             // If requiresAuth is set, check if the user is (un)authenticated (permission-based is preferred)
-            if ("requiresAuth" in m && m.requiresAuth === true && authManager.isAuthenticated === !m.requiresAuth) {
+            if ("requiresAuth" in m && authManager.isAuthenticated === !m.requiresAuth) {
                 return (to.fullPath === '/') ? false : '/';
             }
         }
