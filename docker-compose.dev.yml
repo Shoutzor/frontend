@@ -7,11 +7,11 @@ services:
     ports:
       - "8080:80"
     environment:
-      - APP_DEBUG=false
-      - APP_ENV=production
-      - APP_URL=http://shoutzor.local:8000
-      - BROADCAST_URL=http://shoutzor.local:9000/shoutzor
-      - MIX_PUSHER_APP_KEY=
-      - MIX_PUSHER_SOCKET_HOST=
-      - MIX_PUSHER_PORT=443
-      - MIX_PUSHER_SCHEME=https
+      - APP_DEBUG
+      - APP_ENV
+      - APP_URL
+      - BROADCAST_URL
+      - PUSHER_APP_KEY
+      - PUSHER_SOCKET_HOST
+      - PUSHER_PORT
+      - PUSHER_SCHEME

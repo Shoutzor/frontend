@@ -3,6 +3,7 @@ import {provideApolloClient, useQuery, useSubscription } from "@vue/apollo-compo
 import { LASTPLAYED_QUERY, REQUESTPLAYED_SUBSCRIPTION } from "@graphql/requests";
 import IcecastMetadataPlayer from "icecast-metadata-player";
 import {PlayerState} from "@models/PlayerState";
+import {defaultMediaImage} from "../config";
 
 export class MediaPlayer {
 
@@ -22,6 +23,7 @@ export class MediaPlayer {
         this.#state = reactive({
             lastPlayed: null,
             lastPlayedLoading: true,
+            lastPlayedImage: defaultMediaImage,
             playerStatus: PlayerState.STOPPED,
             trackPosition: 0
         });
@@ -39,12 +41,17 @@ export class MediaPlayer {
         return this.#state.lastPlayed;
     }
 
+    get lastPlayedImage() {
+        return this.#state.lastPlayedImage;
+    }
+
     get lastPlayedLoading() {
         return this.#state.lastPlayedLoading;
     }
 
     #updateLastPlayed(request) {
         this.#state.lastPlayed = request;
+        this.#state.lastPlayedImage = this.#getLastPlayedImage();
 
         if(this.#positionUpdater) {
             clearInterval(this.#positionUpdater);
@@ -67,6 +74,27 @@ export class MediaPlayer {
                 this.#updateTrackPosition(position);
             }, 1000);
         }
+    }
+
+    #getLastPlayedImage() {
+        if(this.lastPlayed?.media?.image) {
+            return this.lastPlayed?.media?.image;
+        }
+        
+        if(this.lastPlayed?.media?.albums) {
+            let result = null;
+            this.lastPlayed?.media?.albums.forEach((a) => {
+                if(a.image) {
+                    result = a.image;
+                }
+            });
+
+            if(result !== null) {
+                return '/images/albums/' + result;
+            }
+        }
+
+        return defaultMediaImage;
     }
 
     get trackPosition() {

@@ -3,7 +3,7 @@
         <div
             class="media-info d-inline-flex flex-grow-1 flex-shrink-0 flex-basis-0 align-items-center order-1 order-md-0">
             <div class="album-image d-inline-block pe-1">
-                <img class="rounded" :src="nowplaying?.media?.image || defaultMediaImage" alt="media image"/>
+                <img class="rounded" :src="coverImage" alt="media image"/>
             </div>
             <div class="track-info d-inline-block">
                 <span v-if="isLoading" class="track-title">Loading..</span>
@@ -75,8 +75,6 @@ import PlayButton from "@components/PlayButton.vue";
 import ArtistList from "@components/ArtistList.vue";
 import BaseSpinner from "@components/BaseSpinner.vue";
 
-import {defaultMediaImage} from "../js/config";
-
 export default {
     name: 'the-mediaplayer',
     components: {
@@ -91,7 +89,6 @@ export default {
         return {
             volume: 100,
             votingEnabled: false,
-            defaultMediaImage,
             PlayerState
         }
     },
@@ -104,6 +101,7 @@ export default {
         playerStatus() { return this.mediaPlayer.playerStatus; },
         videoEnabled() { return false; },
         nowplaying() { return this.mediaPlayer.lastPlayed; },
+        coverImage() { return this.mediaPlayer.lastPlayedImage; },
         timePassed() {
             let p = this.mediaPlayer.trackPosition;
             return (!p && p !== 0) ? null : this.formatTime(p);

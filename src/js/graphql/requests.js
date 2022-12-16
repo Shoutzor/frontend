@@ -23,6 +23,10 @@ export const LASTPLAYED_QUERY = gql`
                         id
                         name
                     }
+                    albums {
+                        id
+                        image
+                    }
                 }
             }
         }

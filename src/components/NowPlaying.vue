@@ -1,5 +1,5 @@
 <template>
-    <information-header :image="request?.media?.image || defaultMediaImage" class="nowplaying">
+    <information-header :image="coverImage" class="nowplaying">
         <template v-if="isLoading">
             <p class="placeholder placeholder-wave placeholder-lg col-8"></p>
             <span class="placeholder placeholder-wave placeholder-sm col-5"></span>
@@ -27,7 +27,6 @@
 import ArtistList from "@components/ArtistList.vue";
 import UserList from "@components/UserList.vue";
 
-import {defaultMediaImage} from "../js/config";
 import InformationHeader from "@components/InformationHeader.vue";
 
 export default {
@@ -37,14 +36,12 @@ export default {
         ArtistList,
         UserList
     },
-    data() {
-        return {
-            defaultMediaImage
-        }
-    },
     computed: {
         request() { 
             return this.mediaPlayer.lastPlayed; 
+        },
+        coverImage() {
+            return this.mediaPlayer.lastPlayedImage;
         },
         isLoading() {
             return this.mediaPlayer.lastPlayedLoading;
