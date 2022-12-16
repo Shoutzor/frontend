@@ -120,7 +120,7 @@ export class MediaPlayer {
                 this.#updatePlayerState(PlayerState.PLAYING);
             },
             onStop: () => {
-                this.#updateLastPlayed(PlayerState.STOPPED);
+                this.#updatePlayerState(PlayerState.STOPPED);
             }
         });
 
