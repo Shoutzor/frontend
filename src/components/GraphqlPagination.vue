@@ -122,14 +122,11 @@ export default {
             error
         } = useQuery(
             this.queryObj, 
-            Object.assign({
-                page: this.currentPage,
-                limit: this.limit,
-                where: this.where
-            }, this.queryVars), 
+            this.getQueryVars(), 
             {
                 fetchPolicy: this.cachePolicy
-        });
+            }
+        );
 
         this.isLoading = loading;
         this.error = error;
@@ -169,7 +166,14 @@ export default {
         },
         async loadPage(page) {
             this.currentPage = page;
-            this.refetch();
+            this.refetch(this.getQueryVars());
+        },
+        getQueryVars() {
+            return Object.assign({
+                page: this.currentPage,
+                limit: this.limit,
+                where: this.where
+            }, this.queryVars);
         }
     }
 }

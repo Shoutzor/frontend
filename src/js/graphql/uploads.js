@@ -3,11 +3,15 @@ import gql from 'graphql-tag';
 export const GET_UPLOADS_QUERY = gql`
     query get_uploads_query(
         $orderBy: [QueryUploadsOrderByOrderByClause!],
-        $where: QueryUploadsWhereWhereConditions
+        $where: QueryUploadsWhereWhereConditions,
+        $page: Int, 
+        $limit: Int
     ) {
         uploads(
             orderBy: $orderBy,
-            where: $where
+            where: $where,
+            page: $page, 
+            first: $limit
         ) {
             paginatorInfo{
                 lastPage
