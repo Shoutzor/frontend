@@ -18,7 +18,7 @@
         "bootstrap": "^5.2.3",
         "bootstrap-icons-vue": "^1.8.1",
         "cross-env": "^7.0.3",
-        "dashjs": "^4.4.0",
+        "dashjs": "^4.5.2",
         "graphql": "^16.6.0",
         "graphql-tag": "^2.12.6",
         "icecast-metadata-player": "^1.13.2",
