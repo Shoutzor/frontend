@@ -47,7 +47,7 @@
         "babel-loader": "^8.2.5",
         "css-loader": "^6.7.3",
         "file-loader": "^6.2.0",
-        "patch-package": "^6.4.7",
+        "patch-package": "^6.5.1",
         "sass": "^1.57.1",
         "postcss": "^8.4.20",
         "sass-loader": "^13.0.0",
