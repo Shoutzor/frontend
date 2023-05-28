@@ -115,7 +115,7 @@ export class AuthenticationManager {
         }
 
         // Once all promises are resolved, the AuthenticationManager has finished initializing
-        return Promise.allSettled([guestPermissionsPromise, sessionPromise])
+        return Promise.all([guestPermissionsPromise, sessionPromise])
             .then(() => {
                 this.#listenToRoleChanges();
                 this.#state.isInitialized = true;
