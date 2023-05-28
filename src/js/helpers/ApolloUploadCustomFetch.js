@@ -16,41 +16,41 @@ function parseHeaders(rawHeaders) {
 
 function uploadFetch(url, options = {}) {
   return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
-        xhr.onload = () => {
-            const opts = {
-                status: xhr.status,
-                statusText: xhr.statusText,
-                headers: parseHeaders(xhr.getAllResponseHeaders() || ''),
-            };
-            opts.url = 'responseURL' in xhr ? xhr.responseURL : opts.headers.get('X-Request-URL');
-            const body = 'response' in xhr ? xhr.response : xhr.responseText;
-            resolve(new Response(body, opts));
+    xhr.onload = () => {
+        const opts = {
+            status: xhr.status,
+            statusText: xhr.statusText,
+            headers: parseHeaders(xhr.getAllResponseHeaders() || ''),
         };
-        
-        xhr.onerror = () => {
-            // It's impossible to catch CORS errors: https://stackoverflow.com/questions/4844643/is-it-possible-to-trap-cors-errors
-            reject(new Error('REQUEST_FAILED'));
-        };
+        opts.url = 'responseURL' in xhr ? xhr.responseURL : opts.headers.get('X-Request-URL');
+        const body = 'response' in xhr ? xhr.response : xhr.responseText;
+        resolve(new Response(body, opts));
+    };
 
-        xhr.ontimeout = () => {
-            reject(new Error('REQUEST_TIMEOUT'));
-        };
+    xhr.onerror = () => {
+        // It's impossible to catch CORS errors: https://stackoverflow.com/questions/4844643/is-it-possible-to-trap-cors-errors
+        reject(new Error('REQUEST_FAILED'));
+    };
 
-        xhr.open(options.method, url, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        
-        Object.keys(options.headers).forEach((key) => {
-            xhr.setRequestHeader(key, options.headers[key]);
-        });
+    xhr.ontimeout = () => {
+        reject(new Error('REQUEST_TIMEOUT'));
+    };
 
-        if (xhr.upload) {
-            xhr.upload.onprogress = options.onProgress;
-        }
+    xhr.open(options.method, url, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        xhr.send(options.body);
+    Object.keys(options.headers).forEach((key) => {
+        xhr.setRequestHeader(key, options.headers[key]);
     });
+
+    if (xhr.upload) {
+        xhr.upload.onprogress = options.onProgress;
+    }
+
+    xhr.send(options.body);
+  });
 }
 
 export default (url, opts = {}) => {

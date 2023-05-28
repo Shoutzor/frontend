@@ -44,8 +44,6 @@ export class AuthenticationManager {
             permissions: [],
             guestPermissions: []
         });
-
-        this.#initializedPromise = this.#initialize();
     }
 
     /*
@@ -54,10 +52,6 @@ export class AuthenticationManager {
 
     get isInitialized() {
         return this.#state.isInitialized;
-    }
-
-    get isInitializedPromise() {
-        return this.#initializedPromise;
     }
 
     get isAuthenticated() {
@@ -103,36 +97,29 @@ export class AuthenticationManager {
         delete this.#echoClient.connector.options.auth.headers.authorization;
     }
 
-    async #initialize() {
-        return new Promise(async (resolve, reject) => {
-            let token = localStorage.getItem(this.#tokenName);
-            let sessionPromise = null;
-            let guestPermissionsPromise = await this.#loadGuestPermissions();
+    async initialize() {
+        let token = localStorage.getItem(this.#tokenName);
+        let sessionPromise = null;
+        let guestPermissionsPromise = await this.#loadGuestPermissions();
 
-            if(!!token) {
-                this.#setToken(token);
-                sessionPromise = this.#resumeSession();
-                sessionPromise.catch(() => {
-                    // If resumeSession failed, this will ensure the guest permissions are set correctly
-                    this.#invalidateSession();
-                })
-            }
-            else {
+        if(!!token) {
+            this.#setToken(token);
+            sessionPromise = this.#resumeSession();
+            sessionPromise.catch(() => {
+                // If resumeSession failed, this will ensure the guest permissions are set correctly
                 this.#invalidateSession();
-            }
+            })
+        }
+        else {
+            this.#invalidateSession();
+        }
 
-            // Once all promises are resolved, the AuthenticationManager has finished initializing
-            Promise.allSettled([guestPermissionsPromise, sessionPromise])
-                .then(() => {
-                    this.#listenToRoleChanges();
-                })
-                .finally(() => {
-                    resolve(true);
-                });
-        })
-        .then(() => {
-            this.#state.isInitialized = true;
-        });
+        // Once all promises are resolved, the AuthenticationManager has finished initializing
+        return Promise.allSettled([guestPermissionsPromise, sessionPromise])
+            .then(() => {
+                this.#listenToRoleChanges();
+                this.#state.isInitialized = true;
+            });
     }
 
     #listenToRoleChanges() {
@@ -171,16 +158,24 @@ export class AuthenticationManager {
 
     #loadGuestPermissions() {
         return new Promise((resolve, reject) => {
-            const { onResult } = useQuery(GET_ROLE_QUERY, {
+            const { onResult, onError } = useQuery(GET_ROLE_QUERY, {
                 name: "guest"
             });
 
+            onError((error) => {
+                return reject(error);
+            });
+
             onResult((result) => {
+                if(result.error) {
+                    return reject(result.error);
+                }
+
                 let role = result.data?.role;
                 if(!role) {
                     this.#state.guestPermissions = [];
                     this.#updateGuestPermissions();
-                    return reject("Role not found, Shoutz0r installation might be broken");
+                    return reject("Guest role failed to load, Shoutz0r installation might be broken");
                 }
 
                 this.#state.guestPermissions = (role.permissions === null) ? [] : role.permissions.map(p => p.name);
@@ -418,6 +413,7 @@ export class AuthenticationManager {
 export const AuthenticationPlugin = {
     install: (app, options) => {
         const auth = new AuthenticationManager(app, options.tokenName, options.echoClient, options.httpClient, options.apolloClient)
+
         app.config.globalProperties.auth = auth;
 
         /**
