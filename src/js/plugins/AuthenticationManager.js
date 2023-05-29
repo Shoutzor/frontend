@@ -54,6 +54,10 @@ export class AuthenticationManager {
         return this.#state.isInitialized;
     }
 
+    get isInitializedPromise() {
+        return this.#initializedPromise;
+    }
+
     get isAuthenticated() {
         return this.#state.user !== null;
     }
@@ -118,7 +122,7 @@ export class AuthenticationManager {
         });
 
         // Once all promises are resolved, the AuthenticationManager has finished initializing
-        return Promise.all([guestPermissionsPromise, sessionPromise])
+        return this.#initializedPromise = Promise.all([guestPermissionsPromise, sessionPromise])
             .then(() => {
                 this.#listenToRoleChanges();
                 this.#state.isInitialized = true;
