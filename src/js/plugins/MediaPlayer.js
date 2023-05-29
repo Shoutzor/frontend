@@ -138,6 +138,11 @@ export class MediaPlayer {
         this.#state.lastPlayedLoading = loading;
 
         onResult(result => {
+            // There's currently a bug where partial results are returned.
+            if(result.partial) {
+                return;
+            }
+
             this.#updateLastPlayed(result.data.requests.data[0]);
         });
 

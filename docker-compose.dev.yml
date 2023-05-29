@@ -7,11 +7,4 @@ services:
     ports:
       - "8080:80"
     environment:
-      - APP_DEBUG
-      - APP_ENV
       - APP_URL
-      - BROADCAST_URL
-      - PUSHER_APP_KEY
-      - PUSHER_HOST
-      - PUSHER_PORT
-      - PUSHER_SCHEME

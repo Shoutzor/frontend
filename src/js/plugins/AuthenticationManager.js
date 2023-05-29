@@ -100,19 +100,22 @@ export class AuthenticationManager {
     async initialize() {
         let token = localStorage.getItem(this.#tokenName);
         let sessionPromise = null;
-        let guestPermissionsPromise = await this.#loadGuestPermissions();
+        let guestPermissionsPromise = this.#loadGuestPermissions();
 
-        if(!!token) {
-            this.#setToken(token);
-            sessionPromise = this.#resumeSession();
-            sessionPromise.catch(() => {
-                // If resumeSession failed, this will ensure the guest permissions are set correctly
+        // Wait until guestPermissionsPromise has loaded before continuing
+        guestPermissionsPromise.then(() => {
+            if(!!token) {
+                this.#setToken(token);
+                sessionPromise = this.#resumeSession();
+                sessionPromise.catch(() => {
+                    // If resumeSession failed, this will ensure the guest permissions are set correctly
+                    this.#invalidateSession();
+                })
+            }
+            else {
                 this.#invalidateSession();
-            })
-        }
-        else {
-            this.#invalidateSession();
-        }
+            }
+        });
 
         // Once all promises are resolved, the AuthenticationManager has finished initializing
         return Promise.all([guestPermissionsPromise, sessionPromise])
@@ -167,6 +170,11 @@ export class AuthenticationManager {
             });
 
             onResult((result) => {
+                // There's currently a bug where partial results are returned.
+                if(result.partial) {
+                    return;
+                }
+
                 if(result.error) {
                     return reject(result.error);
                 }

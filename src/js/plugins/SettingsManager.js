@@ -19,8 +19,6 @@ export class SettingsManager {
             settings: {},
             isInitialized: false
         });
-
-        this.#initializedPromise = this.#initialize();
     }
 
     /*
@@ -61,7 +59,7 @@ export class SettingsManager {
         });
     }
 
-    async #initialize() {
+    async initialize() {
         return new Promise((resolve, reject) => {
             const promise = this.#apolloClient.query({
                 fetchPolicy: 'network-only',

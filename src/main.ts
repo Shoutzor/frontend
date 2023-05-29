@@ -45,16 +45,43 @@ fetch('/config.json')
         // Using the backend url, we can now call the frontend-config endpoint and fetch the config that the frontend
         // should use.
         return fetch(backendConfig.APP_URL + '/frontend-config')
+            // Catch any Fetch errors, like missing CORS
             .catch(err => {
-                return Promise.reject("Failed to fetch the frontend config from the backend, error: " + err);
+                return Promise.reject(
+                    "Failed to fetch the frontend config from the backend, " +
+                    "check the browser console for more information");
             })
-            .then(res => {
-                if(res.ok) {
+            // Check the response of Fetch and handle any errors
+            .then(async res => {
+                // Response was ok, return the JSON
+                if (res.ok) {
                     return res.json();
                 }
 
-                return Promise.reject("Failed to fetch the frontend config from the backend" + res);
+                // An error occured, Check if the error response was JSON
+                try {
+                    const data = await res.json();
+
+                    console.log("An error was received from the backend", data);
+
+                    // Check if a "status" property exists, and is set to "NOT_INSTALLED"
+                    // This would indicate the backend reporting that Shoutzor needs to be setup
+                    if (data.status && data.status === "NOT_INSTALLED") {
+                        console.error("The backend reports that Shoutzor is not installed yet.");
+
+                        return Promise.reject(
+                            "Shoutzor is not installed yet, please run the setup first. " +
+                            "Check the documentation for more information.");
+                    }
+                } catch (error) {
+                    // Response was not JSON, ignore and return general error
+                }
+
+                return Promise.reject(
+                    "Failed to fetch the frontend config from the backend, " +
+                    "check the browser console for more information");
             })
+            // Response succeeded, continue loading the frontend
             .then(config => {
                 // The UploadManager still uses Axios. Ideally this also should be replaced by GraphQL later on
                 // Currently not the case because I haven't figured out how to track upload progress.
@@ -110,7 +137,7 @@ fetch('/config.json')
                     connectToDevTools: config.APP_DEBUG,
                     defaultOptions: {
                         query: {
-                            fetchPolicy: 'network-only',
+                            fetchPolicy: 'network-only'
                         }
                     }
                 });
@@ -175,12 +202,12 @@ fetch('/config.json')
                     .use(RequestManagerPlugin)
                     .use(BootstrapIconsPlugin);
 
-                // Attempt to initialize the authentication manager first
-                // this will load, for example: the guest permissions
+                // Initialize our plugins where needed
+                let settingsInitializePromise = app.config.globalProperties.settings.initialize();
                 let authInitializePromise = app.config.globalProperties.auth.initialize();
 
                 // Only continue once all prerequisites have finished successfully.
-                return Promise.all([authInitializePromise])
+                return Promise.all([settingsInitializePromise, authInitializePromise])
                     .then(() => {
                         app.mount('#shoutzor');
                     });

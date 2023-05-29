@@ -133,6 +133,11 @@ export default {
         this.refetch = refetch;
 
         onResult((result) => {
+            // There's currently a bug where partial results are returned.
+            if(result.partial) {
+              return;
+            }
+
             const data = result.data[Object.keys(result.data)[0]];
             this.totalPages = data.paginatorInfo.lastPage;
             this.itemsOnPage = data.data;
