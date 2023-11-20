@@ -29,12 +29,12 @@
         "perfect-scrollbar": "^1.5.5",
         "pusher-js": "^7.6.0",
         "resolve-url-loader": "^5.0.0",
-        "socket.io-client": "^4.6.2",
+        "socket.io-client": "^4.7.2",
         "stream-browserify": "^3.0.0",
         "timingsrc": "^1.2.13",
-        "vue": "^3.2.40",
+        "vue": "^3.3.7",
         "vue-loader": "^17.2.2",
-        "vue-router": "^4.0.15",
+        "vue-router": "^4.2.5",
         "vue-slider-component": "^4.1.0-beta.7"
     },
     "devDependencies": {
