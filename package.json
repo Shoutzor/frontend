@@ -24,7 +24,7 @@
         "icecast-metadata-player": "^1.17.1",
         "jquery": "^3.6.3",
         "laravel-echo": "^1.15.0",
-        "mitt": "^3.0.0",
+        "mitt": "^3.0.1",
         "moment": "^2.29.4",
         "perfect-scrollbar": "^1.5.5",
         "pusher-js": "^7.6.0",
