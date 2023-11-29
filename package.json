@@ -33,7 +33,7 @@
         "stream-browserify": "^3.0.0",
         "timingsrc": "^1.4.9",
         "vue": "^3.3.8",
-        "vue-loader": "^17.2.2",
+        "vue-loader": "^17.3.0",
         "vue-router": "^4.2.5",
         "vue-slider-component": "^4.1.0-beta.7"
     },
