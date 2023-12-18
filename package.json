@@ -21,7 +21,7 @@
         "dashjs": "^4.7.2",
         "graphql": "^16.8.1",
         "graphql-tag": "^2.12.6",
-        "icecast-metadata-player": "^1.17.1",
+        "icecast-metadata-player": "^1.17.2",
         "jquery": "^3.7.1",
         "laravel-echo": "^1.15.3",
         "mitt": "^3.0.1",
