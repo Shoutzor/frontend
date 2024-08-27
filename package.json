@@ -19,7 +19,7 @@
         "bootstrap-icons-vue": "^1.11.1",
         "cross-env": "^7.0.3",
         "dashjs": "^4.7.2",
-        "graphql": "^16.8.1",
+        "graphql": "^16.9.0",
         "graphql-tag": "^2.12.6",
         "icecast-metadata-player": "^1.17.1",
         "jquery": "^3.7.1",
