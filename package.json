@@ -11,7 +11,7 @@
         "@babel/plugin-proposal-class-properties": "^7.17.12",
         "@popperjs/core": "^2.11.6",
         "@thekonz/apollo-lighthouse-subscription-link": "2.0.0-rc.1",
-        "@vue/apollo-components": "^4.0.0-alpha.20",
+        "@vue/apollo-components": "^4.0.0",
         "@vue/apollo-composable": "^4.0.2",
         "apollo-upload-client": "^17.0.0",
         "axios": "^1.7.4",
