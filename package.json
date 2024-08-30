@@ -7,7 +7,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@apollo/client": "^3.11.2",
+        "@apollo/client": "^3.11.4",
         "@babel/plugin-proposal-class-properties": "^7.17.12",
         "@popperjs/core": "^2.11.6",
         "@thekonz/apollo-lighthouse-subscription-link": "2.0.0-rc.1",
