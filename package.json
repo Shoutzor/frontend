@@ -7,14 +7,14 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@apollo/client": "^3.11.4",
+        "@apollo/client": "^3.11.5",
         "@babel/plugin-proposal-class-properties": "^7.17.12",
         "@popperjs/core": "^2.11.6",
         "@thekonz/apollo-lighthouse-subscription-link": "2.0.0-rc.1",
         "@vue/apollo-components": "^4.0.0",
-        "@vue/apollo-composable": "^4.2.0",
+        "@vue/apollo-composable": "^4.2.1",
         "apollo-upload-client": "^17.0.0",
-        "axios": "^1.7.4",
+        "axios": "^1.7.6",
         "bootstrap": "^5.3.3",
         "bootstrap-icons-vue": "^1.11.3",
         "cross-env": "^7.0.3",
@@ -54,7 +54,7 @@
         "typescript": "^4.9.4",
         "vite": "^3.2.10",
         "vite-svg-loader": "^3.6.0",
-        "vue-tsc": "^2.0.29",
+        "vue-tsc": "^2.1.2",
         "webpack-cli": "^4.10.0"
     }
 }
