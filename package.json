@@ -38,8 +38,8 @@
     },
     "devDependencies": {
         "@babel/core": "^7.25.2",
-        "@rollup/plugin-commonjs": "^22.0.0",
-        "@vitejs/plugin-vue": "^3.1.0",
+        "@rollup/plugin-commonjs": "^28.0.0",
+        "@vitejs/plugin-vue": "^5.1.4",
         "@vue/babel-helper-vue-jsx-merge-props": "^1.4.0",
         "@vue/compiler-sfc": "^3.4.38",
         "autoprefixer": "^10.4.20",
@@ -52,7 +52,7 @@
         "sass-loader": "^13.3.3",
         "sass-resources-loader": "^2.2.5",
         "typescript": "^4.9.4",
-        "vite": "^3.2.10",
+        "vite": "^5.4.7",
         "vite-svg-loader": "^3.6.0",
         "vue-tsc": "^2.1.4",
         "webpack-cli": "^4.10.0"
