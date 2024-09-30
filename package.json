@@ -31,7 +31,7 @@
         "resolve-url-loader": "^5.0.0",
         "socket.io-client": "^4.7.5",
         "stream-browserify": "^3.0.0",
-        "timingsrc": "^1.4.19",
+        "timingsrc": "^1.4.20",
         "vue": "^3.4.38",
         "vue-router": "^4.4.3",
         "vue-slider-component": "^4.1.0-beta.7"
