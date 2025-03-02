@@ -23,7 +23,7 @@
         "graphql-tag": "^2.12.6",
         "icecast-metadata-player": "^1.17.9",
         "jquery": "^3.7.1",
-        "laravel-echo": "^1.16.1",
+        "laravel-echo": "^1.19.0",
         "mitt": "^3.0.1",
         "moment": "^2.30.1",
         "perfect-scrollbar": "^1.5.5",
